@@ -2,6 +2,7 @@ package com.globo.brasileirao.data.disk;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import com.globo.brasileirao.entities.Match;
@@ -44,7 +45,7 @@ public class MatchSQLiteRepository implements MatchDiskRepository {
         final BriteDatabase.Transaction transaction = database.newTransaction();
         try {
             for (Match match : matches) {
-                database.insert("matches", getMatchContentValues(match));
+                database.insert("matches", getMatchContentValues(match), SQLiteDatabase.CONFLICT_REPLACE);
             }
             transaction.markSuccessful();
         } finally {
