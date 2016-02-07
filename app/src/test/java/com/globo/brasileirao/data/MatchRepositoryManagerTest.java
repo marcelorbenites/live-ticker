@@ -16,7 +16,10 @@ import java.util.List;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,11 +55,13 @@ public class MatchRepositoryManagerTest {
         List<Match> resultMatches = Arrays.asList(getSimpleMatch(1), getSimpleMatch(2));
         Observable<List<Match>> networkObservable = Observable.just(resultMatches);
         when(networkRepositoryMock.getMatches()).thenReturn(networkObservable);
+        when(diskRepositoryMock.saveMatches(resultMatches)).thenReturn(Observable.<Void>empty());
 
         TestSubscriber<List<Match>> testSubscriber = new TestSubscriber<>();
         repository.getMatches().subscribe(testSubscriber);
         testSubscriber.assertValue(resultMatches);
         testSubscriber.assertCompleted();
+        verify(diskRepositoryMock).saveMatches(resultMatches);
     }
 
     @Test public void getMatchesNetworkErrorFullDisk() throws Exception {

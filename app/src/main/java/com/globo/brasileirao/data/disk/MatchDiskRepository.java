@@ -16,4 +16,10 @@ public interface MatchDiskRepository {
      */
     Observable<List<Match>> getMatches();
 
+    /**
+     * @param matches to be saved in repository.
+     * @return observable for saving matches result.
+     */
+    Observable<Void> saveMatches(List<Match> matches);
+
 }

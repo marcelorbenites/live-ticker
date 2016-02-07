@@ -34,11 +34,19 @@ public class MatchRepositoryManager implements MatchRepository {
      * @return observable for available matches.
      */
     @Override public Observable<List<Match>> getMatches() {
-        return networkRepository.getMatches()
+        return getMatchesFormNetworkAndSaveToDisk()
                 .onErrorResumeNext(new Func1<Throwable, Observable<? extends List<Match>>>() {
                     @Override public Observable<? extends List<Match>> call(Throwable throwable) {
                         return diskRepository.getMatches().switchIfEmpty(Observable.<List<Match>>error(throwable));
                     }
                 });
+    }
+
+    private Observable<List<Match>> getMatchesFormNetworkAndSaveToDisk() {
+        return networkRepository.getMatches().doOnNext(new Action1<List<Match>>() {
+            @Override public void call(List<Match> matches) {
+                diskRepository.saveMatches(matches).subscribe();
+            }
+        });
     }
 }
