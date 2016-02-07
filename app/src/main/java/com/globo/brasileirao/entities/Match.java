@@ -1,10 +1,15 @@
 package com.globo.brasileirao.entities;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 /**
  * Describes a match between two teams.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Match {
 
     private final int matchId;
@@ -15,7 +20,7 @@ public class Match {
     private final Date date;
     private final String location;
 
-    public Match(int matchId, Team homeTeam, Team awayTeam, int homeScore, int awayScore, Date date, String location) {
+    @JsonCreator public Match(@JsonProperty("matchId") int matchId, @JsonProperty("homeTeam") Team homeTeam, @JsonProperty("awayTeam") Team awayTeam, @JsonProperty("homeScore") int homeScore, @JsonProperty("awayScore") int awayScore, @JsonProperty("date") Date date, @JsonProperty("location") String location) {
         this.matchId = matchId;
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;

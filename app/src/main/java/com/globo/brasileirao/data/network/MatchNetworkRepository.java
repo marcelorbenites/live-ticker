@@ -4,6 +4,7 @@ import com.globo.brasileirao.entities.Match;
 
 import java.util.List;
 
+import retrofit2.http.GET;
 import rx.Observable;
 
 /**
