@@ -4,7 +4,6 @@ import com.globo.brasileirao.data.disk.MatchDiskRepository;
 import com.globo.brasileirao.data.network.MatchNetworkRepository;
 import com.globo.brasileirao.entities.Match;
 
-import java.util.Collections;
 import java.util.List;
 
 import rx.Observable;
@@ -45,7 +44,7 @@ public class MatchRepositoryManager implements MatchRepository {
     private Observable<List<Match>> getMatchesFormNetworkAndSaveToDisk() {
         return networkRepository.getMatches().doOnNext(new Action1<List<Match>>() {
             @Override public void call(List<Match> matches) {
-                diskRepository.saveMatches(matches).subscribe();
+                diskRepository.saveMatches(matches);
             }
         });
     }
