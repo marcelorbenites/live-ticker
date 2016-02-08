@@ -84,4 +84,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.matches.addAll(matches);
         notifyDataSetChanged();
     }
+
+    public boolean isEmpty() {
+        return matches.isEmpty();
+    }
 }

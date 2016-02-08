@@ -7,7 +7,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
 
 import com.globo.brasileirao.ApplicationComponent;
 import com.globo.brasileirao.BrasileiraoApplication;
@@ -41,6 +42,7 @@ public class MatchListActivity extends RxAppCompatActivity {
     @Bind(R.id.activity_match_list_swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.activity_match_list_recycler_view) RecyclerView list;
     @Bind(R.id.activity_match_list_toolbar) Toolbar toolbar;
+    @Bind(R.id.activity_match_list_empty_text) TextView emptyText;
 
     @Inject MatchRepository repository;
     @Inject MatchListAdapter adapter;
@@ -110,6 +112,7 @@ public class MatchListActivity extends RxAppCompatActivity {
                         swipeRefreshLayout.post(new Runnable() {
                             @Override public void run() {
                                 swipeRefreshLayout.setRefreshing(false);
+                                updateListVisibility();
                             }
                         });
                     }
@@ -123,6 +126,16 @@ public class MatchListActivity extends RxAppCompatActivity {
                         Snackbar.make(coordinatorLayout, throwableToStringResourceConverter.convert(throwable), Snackbar.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void updateListVisibility() {
+        if (adapter.isEmpty()) {
+            list.setVisibility(View.GONE);
+            emptyText.setVisibility(View.VISIBLE);
+        } else {
+            emptyText.setVisibility(View.GONE);
+            list.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showSwipeRefreshLayoutAndRefresh() {
