@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="recycler_view_match_item_height">72dp</dimen>
+    <dimen name="base_icon_height">24dp</dimen>
+    <dimen name="base_icon_width">24dp</dimen>
+    <dimen name="base_padding_end">16dp</dimen>
+    <dimen name="base_padding_start">16dp</dimen>
+    <dimen name="base_padding_top">8dp</dimen>
+    <dimen name="base_padding_bottom">8dp</dimen>
+    <dimen name="base_icon_end_margin">16dp</dimen>
+    <dimen name="recycler_view_match_item_team_score_margin_end">4dp</dimen>
+    <dimen name="recycler_view_match_item_team_score_margin_start">4dp</dimen>
+</resources>

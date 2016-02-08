@@ -3,7 +3,8 @@ package com.globo.brasileirao.view;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.View;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.globo.brasileirao.ApplicationComponent;
@@ -12,7 +13,9 @@ import com.globo.brasileirao.R;
 import com.globo.brasileirao.data.DataModule;
 import com.globo.brasileirao.data.MatchRepository;
 import com.globo.brasileirao.entities.Match;
+import com.globo.brasileirao.view.adapter.MatchListAdapter;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
+import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.RxActivity;
 
@@ -29,31 +32,54 @@ import rx.schedulers.Schedulers;
 
 public class MatchListActivity extends RxActivity {
 
+    public static final int TEAM_ICON_WIDTH_DP = 24;
+    public static final int TEAM_ICON_HEIGHT_DP = 24;
     @Bind(R.id.activity_match_list_coordinator_layout) CoordinatorLayout coordinatorLayout;
     @Bind(R.id.activity_match_list_swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
+    @Bind(R.id.activity_match_list_recycler_view) RecyclerView list;
 
     @Inject MatchRepository repository;
-
-    private View.OnClickListener retryListener = new View.OnClickListener() {
-        @Override public void onClick(View v) {
-            showSwipeRefreshLayoutAndRefresh();
-        }
-    };
+    @Inject MatchListAdapter adapter;
+    @Inject LinearLayoutManager layoutManager;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_list);
         ButterKnife.bind(this);
+        inject();
+        list.setLayoutManager(layoutManager);
+        list.setAdapter(adapter);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+    }
+
+    private void inject() {
         DaggerMatchListComponent.builder()
-                .applicationComponent(getApplicationComponent())
+                .activityComponent(getActivityComponent())
                 .dataModule(new DataModule())
+                .matchListModule(new MatchListModule(TEAM_ICON_WIDTH_DP, TEAM_ICON_HEIGHT_DP, R.mipmap.ic_launcher))
                 .build()
                 .injectMatchListActivity(this);
     }
 
+    private ActivityComponent getActivityComponent() {
+        return DaggerActivityComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .activityModule(new ActivityModule(this))
+                .build();
+    }
+
     @Override protected void onResume() {
         super.onResume();
+        RxRecyclerView.scrollStateChanges(list)
+                .compose(this.<Integer>bindUntilEvent(ActivityEvent.PAUSE))
+                .subscribe(new Action1<Integer>() {
+                    @Override public void call(Integer state) {
+                        // Enable swipe to refresh only when first item is visible
+                        // to make smooth experience
+                        swipeRefreshLayout.setEnabled(state == RecyclerView.SCROLL_STATE_IDLE
+                                && layoutManager.findFirstVisibleItemPosition() == 0);
+                    }
+                });
         RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
                 .compose(this.<Void>bindUntilEvent(ActivityEvent.PAUSE))
                 .subscribe(new Action1<Void>() {
@@ -84,7 +110,7 @@ public class MatchListActivity extends RxActivity {
                 })
                 .subscribe(new Action1<List<Match>>() {
                     @Override public void call(List<Match> matches) {
-                        Toast.makeText(MatchListActivity.this, matches.toString(), Toast.LENGTH_LONG).show();
+                        adapter.refresh(matches);
                     }
                 }, new Action1<Throwable>() {
                     @Override public void call(Throwable throwable) {

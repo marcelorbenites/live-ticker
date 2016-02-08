@@ -9,10 +9,9 @@
         android:id="@+id/activity_match_list_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
-            android:clickable="true"
-            android:focusable="true"
-            android:background="@color/colorAccent"
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/activity_match_list_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </android.support.v4.widget.SwipeRefreshLayout>

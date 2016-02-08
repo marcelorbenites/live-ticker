@@ -1,11 +1,13 @@
 package com.globo.brasileirao;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.globo.brasileirao.data.disk.BrasileiraoDatabaseHelper;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -22,6 +24,10 @@ public class ApplicationModule {
 
     public ApplicationModule(Application application) {
         this.application = application;
+    }
+
+    @Provides @Named("application") @Singleton Context provideContext() {
+        return application;
     }
 
     @Provides @Singleton Retrofit provideRetrofit() {

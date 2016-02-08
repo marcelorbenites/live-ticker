@@ -1,4 +1,3 @@
 <resources>
     <string name="app_name">Brasileirao</string>
-    <string name="activity_match_list_snackbar_action_retry_text">Retry</string>
 </resources>

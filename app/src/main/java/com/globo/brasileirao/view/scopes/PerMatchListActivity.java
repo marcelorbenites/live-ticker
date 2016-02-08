@@ -1,4 +1,4 @@
-package com.globo.brasileirao.view;
+package com.globo.brasileirao.view.scopes;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -9,5 +9,5 @@ import javax.inject.Scope;
 @Scope
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface PerActivity {
+public @interface PerMatchListActivity {
 }

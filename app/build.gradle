@@ -53,6 +53,7 @@ dependencies {
     compile 'com.trello:rxlifecycle:0.4.0'
     compile 'com.trello:rxlifecycle-components:0.4.0'
     compile 'com.jakewharton.rxbinding:rxbinding-support-v4:0.3.0'
+    compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:0.3.0'
 
     // Database
     compile 'com.squareup.sqlbrite:sqlbrite:0.5.1'
@@ -64,5 +65,8 @@ dependencies {
 
     // View Binding
     compile 'com.jakewharton:butterknife:7.0.1'
+
+    // Image
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
 }
