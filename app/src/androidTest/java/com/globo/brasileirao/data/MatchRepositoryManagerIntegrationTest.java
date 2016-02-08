@@ -268,7 +268,7 @@ public class MatchRepositoryManagerIntegrationTest {
                         1,
                         calendar.getTime(),
                         "Maracanã"));
-        diskRepository.saveMatches(matches);
+        diskRepository.saveOrOverwriteMatches(matches);
 
         TestSubscriber<List<Match>> main = new TestSubscriber<>();
         repository.getMatches().subscribe(main);

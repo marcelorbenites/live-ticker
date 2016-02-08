@@ -59,7 +59,7 @@ public class MatchRepositoryManagerTest {
         repository.getMatches().subscribe(testSubscriber);
         testSubscriber.assertValue(resultMatches);
         testSubscriber.assertCompleted();
-        verify(diskRepositoryMock).saveMatches(resultMatches);
+        verify(diskRepositoryMock).saveOrOverwriteMatches(resultMatches);
     }
 
     @Test public void getMatchesNetworkErrorFullDisk() throws Exception {

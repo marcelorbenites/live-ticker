@@ -44,7 +44,7 @@ public class MatchRepositoryManager implements MatchRepository {
     private Observable<List<Match>> getMatchesFormNetworkAndSaveToDisk() {
         return networkRepository.getMatches().doOnNext(new Action1<List<Match>>() {
             @Override public void call(List<Match> matches) {
-                diskRepository.saveMatches(matches);
+                diskRepository.saveOrOverwriteMatches(matches);
             }
         });
     }

@@ -45,7 +45,7 @@ public class MatchSQLiteRepositoryTest {
                         3,
                         calendar.getTime(),
                         "Maracanã"));
-        repository.saveMatches(matches);
+        repository.saveOrOverwriteMatches(matches);
 
         TestSubscriber<List<Match>> testSubscriber = new TestSubscriber<>();
         repository.getMatches().subscribe(testSubscriber);

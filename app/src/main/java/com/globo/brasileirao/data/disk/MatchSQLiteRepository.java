@@ -24,10 +24,6 @@ public class MatchSQLiteRepository implements MatchDiskRepository {
         this.database = database;
     }
 
-    /**
-     * @return observable that return all matches stored in repository and completes. If no match is found
-     * observable completes without emitting items.
-     */
     @Override public Observable<List<Match>> getMatches() {
         return database.createQuery("matches", "SELECT * FROM matches")
                 .mapToList(getCursorToMatch())
@@ -41,7 +37,7 @@ public class MatchSQLiteRepository implements MatchDiskRepository {
                 });
     }
 
-    @Override public void saveMatches(List<Match> matches) {
+    @Override public void saveOrOverwriteMatches(List<Match> matches) {
         final BriteDatabase.Transaction transaction = database.newTransaction();
         try {
             for (Match match : matches) {

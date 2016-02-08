@@ -12,15 +12,16 @@ import rx.Observable;
 public interface MatchDiskRepository {
 
     /**
-     * @return observable for matches available on disk.
+     * @return observable that return all matches stored in repository and completes. If no match is found
+     * observable completes without emitting items.
      */
     Observable<List<Match>> getMatches();
 
     /**
-     * Save matches to repository.
+     * Save matches to repository overwriting them if they already exist.
      * @param matches to be saved in repository.
      */
-    void saveMatches(List<Match> matches);
+    void saveOrOverwriteMatches(List<Match> matches);
 
     /**
      * Clear all matches in repository.
