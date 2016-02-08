@@ -26,6 +26,7 @@ dependencies {
 
     //Google
     compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
 
     // Reactive Programming
     compile 'io.reactivex:rxandroid:1.1.0'
@@ -48,6 +49,11 @@ dependencies {
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.squareup.okhttp3:mockwebserver:3.0.1'
 
+    // Rx
+    compile 'com.trello:rxlifecycle:0.4.0'
+    compile 'com.trello:rxlifecycle-components:0.4.0'
+    compile 'com.jakewharton.rxbinding:rxbinding-support-v4:0.3.0'
+
     // Database
     compile 'com.squareup.sqlbrite:sqlbrite:0.5.1'
 
@@ -55,4 +61,8 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0.2'
     provided 'org.glassfish:javax.annotation:10.0-b28'
     apt 'com.google.dagger:dagger-compiler:2.0.2'
+
+    // View Binding
+    compile 'com.jakewharton:butterknife:7.0.1'
+
 }
