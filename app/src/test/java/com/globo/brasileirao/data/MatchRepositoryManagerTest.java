@@ -74,7 +74,8 @@ public class MatchRepositoryManagerTest {
         TestSubscriber<List<Match>> testSubscriber = new TestSubscriber<>();
         repository.getMatches().subscribe(testSubscriber);
         testSubscriber.assertValue(resultMatches);
-        testSubscriber.assertCompleted();
+        testSubscriber.assertError(IOException.class);
+        testSubscriber.assertUnsubscribed();
     }
 
     private Match getSimpleMatch(int id) {

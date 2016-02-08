@@ -29,14 +29,14 @@ public class MatchRepositoryManager implements MatchRepository {
     }
 
     /**
-     * First go to network if error fallback to disk if empty emmit network error.
+     * First go to network if error fallback to disk and emmit network error.
      * @return observable for available matches.
      */
     @Override public Observable<List<Match>> getMatches() {
         return getMatchesFormNetworkAndSaveToDisk()
                 .onErrorResumeNext(new Func1<Throwable, Observable<? extends List<Match>>>() {
                     @Override public Observable<? extends List<Match>> call(Throwable throwable) {
-                        return diskRepository.getMatches().switchIfEmpty(Observable.<List<Match>>error(throwable));
+                        return Observable.concat(diskRepository.getMatches(), Observable.<List<Match>>error(throwable));
                     }
                 });
     }
