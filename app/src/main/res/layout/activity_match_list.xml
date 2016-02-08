@@ -5,14 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/activity_match_list_swipe_refresh"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/activity_match_list_recycler_view"
+        <include
+            android:id="@+id/activity_match_list_toolbar"
+            layout="@layout/brasileirao_toolbar"/>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_below="@id/activity_match_list_toolbar"
+            android:id="@+id/activity_match_list_swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/activity_match_list_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

@@ -5,6 +5,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.globo.brasileirao.ApplicationComponent;
@@ -17,7 +18,7 @@ import com.globo.brasileirao.view.adapter.MatchListAdapter;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.RxActivity;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import java.util.List;
 
@@ -30,13 +31,14 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-public class MatchListActivity extends RxActivity {
+public class MatchListActivity extends RxAppCompatActivity {
 
     public static final int TEAM_ICON_WIDTH_DP = 24;
     public static final int TEAM_ICON_HEIGHT_DP = 24;
     @Bind(R.id.activity_match_list_coordinator_layout) CoordinatorLayout coordinatorLayout;
     @Bind(R.id.activity_match_list_swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.activity_match_list_recycler_view) RecyclerView list;
+    @Bind(R.id.activity_match_list_toolbar) Toolbar toolbar;
 
     @Inject MatchRepository repository;
     @Inject MatchListAdapter adapter;
@@ -47,6 +49,7 @@ public class MatchListActivity extends RxActivity {
         setContentView(R.layout.activity_match_list);
         ButterKnife.bind(this);
         inject();
+        setSupportActionBar(toolbar);
         list.setLayoutManager(layoutManager);
         list.setAdapter(adapter);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);

@@ -41,6 +41,6 @@ public class ActivityModule {
     }
 
     @Provides DateFormat provideDateFormat() {
-        return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+        return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
     }
 }

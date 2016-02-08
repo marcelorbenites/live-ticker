@@ -40,7 +40,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        bindAptoideApplication((MatchViewHolder) holder, matches.get(position));
+        bindMatch((MatchViewHolder) holder, matches.get(position));
     }
 
     @Override public void onViewRecycled(RecyclerView.ViewHolder holder) {
@@ -48,7 +48,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ((MatchViewHolder)holder).setOnClickListener(null);
     }
 
-    private void bindAptoideApplication(MatchViewHolder holder, final Match match) {
+    private void bindMatch(MatchViewHolder holder, final Match match) {
         holder.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 if (clickListener != null) {
