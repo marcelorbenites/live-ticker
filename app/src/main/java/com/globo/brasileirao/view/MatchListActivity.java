@@ -2,6 +2,7 @@ package com.globo.brasileirao.view;
 
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import com.globo.brasileirao.R;
 import com.globo.brasileirao.data.DataModule;
 import com.globo.brasileirao.data.MatchRepository;
 import com.globo.brasileirao.entities.Match;
+import com.globo.brasileirao.exceptions.ThrowableToStringResourceConverter;
 import com.globo.brasileirao.view.adapter.MatchListAdapter;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
@@ -43,6 +45,7 @@ public class MatchListActivity extends RxAppCompatActivity {
     @Inject MatchRepository repository;
     @Inject MatchListAdapter adapter;
     @Inject LinearLayoutManager layoutManager;
+    @Inject ThrowableToStringResourceConverter throwableToStringResourceConverter;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +120,7 @@ public class MatchListActivity extends RxAppCompatActivity {
                     }
                 }, new Action1<Throwable>() {
                     @Override public void call(Throwable throwable) {
-                        Toast.makeText(MatchListActivity.this, throwable.getMessage(), Toast.LENGTH_LONG).show();
+                        Snackbar.make(coordinatorLayout, throwableToStringResourceConverter.convert(throwable), Snackbar.LENGTH_SHORT).show();
                     }
                 });
     }

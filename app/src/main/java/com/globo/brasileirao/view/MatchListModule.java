@@ -3,6 +3,8 @@ package com.globo.brasileirao.view;
 import android.support.annotation.DrawableRes;
 import android.view.LayoutInflater;
 
+import com.globo.brasileirao.exceptions.MatchListThrowableToStringResourceConverter;
+import com.globo.brasileirao.exceptions.ThrowableToStringResourceConverter;
 import com.globo.brasileirao.view.adapter.MatchListAdapter;
 import com.globo.brasileirao.view.image.ImageLoader;
 import com.globo.brasileirao.view.utils.UnitConverter;
@@ -29,5 +31,7 @@ public class MatchListModule {
         return new MatchListAdapter(layoutInflater, imageLoader, unitConverter.dpToPixels(teamIconWidth), unitConverter.dpToPixels(teamIconHeight), teamIconPlaceholder, matchDateFormat);
     }
 
-
+    @Provides ThrowableToStringResourceConverter provideThrowableToStringResourceConverter() {
+        return new MatchListThrowableToStringResourceConverter();
+    }
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Brasileirao</string>
+    <string name="activity_match_list_network_error">No connection</string>
+    <string name="activity_match_list_unknown_error">Oops something went wrong</string>
 </resources>
