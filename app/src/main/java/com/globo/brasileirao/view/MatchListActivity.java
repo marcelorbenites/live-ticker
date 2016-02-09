@@ -1,5 +1,6 @@
 package com.globo.brasileirao.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,7 @@ import com.globo.brasileirao.data.MatchRepository;
 import com.globo.brasileirao.entities.Match;
 import com.globo.brasileirao.exceptions.ThrowableToStringResourceConverter;
 import com.globo.brasileirao.view.adapter.MatchListAdapter;
+import com.globo.brasileirao.view.adapter.OnMatchClickListener;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -78,6 +80,11 @@ public class MatchListActivity extends RxAppCompatActivity {
 
     @Override protected void onResume() {
         super.onResume();
+        adapter.setOnMatchClickListener(new OnMatchClickListener() {
+            @Override public void onMatchClick(Match match) {
+                startActivity(new Intent(MatchListActivity.this, LiveTickerActivity.class).putExtra(LiveTickerActivity.EXTRA_MATCH, match));
+            }
+        });
         RxRecyclerView.scrollStateChanges(list)
                 .compose(this.<Integer>bindUntilEvent(ActivityEvent.PAUSE))
                 .subscribe(new Action1<Integer>() {
@@ -96,6 +103,11 @@ public class MatchListActivity extends RxAppCompatActivity {
                     }
                 });
         showSwipeRefreshLayoutAndRefresh();
+    }
+
+    @Override protected void onPause() {
+        super.onPause();
+        adapter.setOnMatchClickListener(null);
     }
 
     private ApplicationComponent getApplicationComponent() {

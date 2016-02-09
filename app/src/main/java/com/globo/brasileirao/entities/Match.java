@@ -1,5 +1,8 @@
 package com.globo.brasileirao.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +13,7 @@ import java.util.Date;
  * Describes a match between two teams.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Match {
+public class Match implements Parcelable {
 
     private final int matchId;
     private final Team homeTeam;
@@ -20,6 +23,18 @@ public class Match {
     private final Date date;
     private final String location;
 
+    public static final Creator<Match> CREATOR = new Creator<Match>() {
+        @Override
+        public Match createFromParcel(Parcel in) {
+            return new Match(in);
+        }
+
+        @Override
+        public Match[] newArray(int size) {
+            return new Match[size];
+        }
+    };
+
     @JsonCreator public Match(@JsonProperty("matchId") int matchId, @JsonProperty("homeTeam") Team homeTeam, @JsonProperty("awayTeam") Team awayTeam, @JsonProperty("homeScore") int homeScore, @JsonProperty("awayScore") int awayScore, @JsonProperty("date") Date date, @JsonProperty("location") String location) {
         this.matchId = matchId;
         this.homeTeam = homeTeam;
@@ -28,6 +43,16 @@ public class Match {
         this.awayScore = awayScore;
         this.date = date;
         this.location = location;
+    }
+
+    protected Match(Parcel in) {
+        matchId = in.readInt();
+        homeTeam = in.readParcelable(Team.class.getClassLoader());
+        awayTeam = in.readParcelable(Team.class.getClassLoader());
+        homeScore = in.readInt();
+        awayScore = in.readInt();
+        date = new Date(in.readLong());
+        location = in.readString();
     }
 
     @Override public boolean equals(Object o) {
@@ -70,5 +95,19 @@ public class Match {
 
     public String getLocation() {
         return location;
+    }
+
+    @Override public int describeContents() {
+        return 0;
+    }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(matchId);
+        dest.writeParcelable(homeTeam, flags);
+        dest.writeParcelable(awayTeam, flags);
+        dest.writeInt(homeScore);
+        dest.writeInt(awayScore);
+        dest.writeLong(date.getTime());
+        dest.writeString(location);
     }
 }
