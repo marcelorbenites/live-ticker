@@ -11,8 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.globo.brasileirao.ApplicationComponent;
-import com.globo.brasileirao.BrasileiraoApplication;
 import com.globo.brasileirao.R;
 import com.globo.brasileirao.data.DataModule;
 import com.globo.brasileirao.data.MatchRepository;
@@ -36,7 +34,7 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-public class MatchListActivity extends RxAppCompatActivity {
+public class MatchListActivity extends BaseActivity {
 
     public static final int TEAM_ICON_WIDTH_DP = 24;
     public static final int TEAM_ICON_HEIGHT_DP = 24;
@@ -71,13 +69,6 @@ public class MatchListActivity extends RxAppCompatActivity {
                 .injectMatchListActivity(this);
     }
 
-    private ActivityComponent getActivityComponent() {
-        return DaggerActivityComponent.builder()
-                .applicationComponent(getApplicationComponent())
-                .activityModule(new ActivityModule(this))
-                .build();
-    }
-
     @Override protected void onResume() {
         super.onResume();
         adapter.setOnMatchClickListener(new OnMatchClickListener() {
@@ -108,10 +99,6 @@ public class MatchListActivity extends RxAppCompatActivity {
     @Override protected void onPause() {
         super.onPause();
         adapter.setOnMatchClickListener(null);
-    }
-
-    private ApplicationComponent getApplicationComponent() {
-        return ((BrasileiraoApplication) getApplication()).getApplicationComponent();
     }
 
     private void refresh() {

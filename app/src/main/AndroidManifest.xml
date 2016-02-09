@@ -18,7 +18,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".view.LiveTickerActivity"/>
+        <activity
+            android:name=".view.LiveTickerActivity"
+            android:label="@string/activity_live_ticker_label"/>
     </application>
 
 </manifest>

@@ -3,4 +3,5 @@
     <string name="activity_match_list_network_error">No connection</string>
     <string name="activity_match_list_unknown_error">Oops something went wrong</string>
     <string name="activity_match_list_empty_list_text">Could not load matches</string>
+    <string name="activity_live_ticker_label">Live Ticker</string>
 </resources>

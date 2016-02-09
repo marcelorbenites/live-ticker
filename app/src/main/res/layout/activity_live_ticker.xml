@@ -1,6 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-</LinearLayout>
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/activity_live_ticker_coordinator_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_live_ticker_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:paddingBottom="@dimen/base_padding_bottom"
+            android:paddingEnd="@dimen/base_padding_end"
+            android:paddingStart="@dimen/base_padding_start"
+            android:paddingTop="@dimen/base_padding_top">
+
+            <TextView
+                android:layout_toStartOf="@+id/activity_live_ticker_score"
+                android:id="@+id/activity_live_ticker_home_team_name"
+                android:gravity="center"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                tools:text="Grêmio"/>
+
+            <LinearLayout
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/activity_live_ticker_score"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/activity_live_ticker_home_team_icon"
+                    android:layout_width="@dimen/base_large_icon_height"
+                    android:layout_height="@dimen/base_large_icon_width"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/ic_launcher"/>
+
+                <TextView
+                    android:id="@+id/activity_live_ticker_home_team_score"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/activity_live_ticker_team_score_margin_end"
+                    android:layout_marginStart="@dimen/activity_live_ticker_team_score_margin_start"
+                    android:gravity="center"
+                    tools:text="3"/>
+
+                <TextView
+                    android:id="@+id/activity_live_ticker_away_team_score"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/activity_live_ticker_team_score_margin_end"
+                    android:layout_marginStart="@dimen/activity_live_ticker_team_score_margin_start"
+                    android:gravity="center"
+                    tools:text="1"/>
+
+                <ImageView
+                    android:id="@+id/activity_live_ticker_away_team_icon"
+                    android:layout_width="@dimen/base_large_icon_height"
+                    android:layout_height="@dimen/base_large_icon_width"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/ic_launcher"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_toEndOf="@+id/activity_live_ticker_score"
+                android:id="@+id/activity_live_ticker_away_team_name"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                tools:text="Fluminense"/>
+
+            <TextView
+                android:layout_below="@id/activity_live_ticker_score"
+                tools:text="Arena Grêmio"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_alignParentStart="true"
+                android:id="@+id/activity_live_ticker_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_below="@id/activity_live_ticker_score"
+                tools:text="Dom 06/21/2015 17:00"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/activity_live_ticker_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </android.support.design.widget.AppBarLayout>
+</android.support.design.widget.CoordinatorLayout>

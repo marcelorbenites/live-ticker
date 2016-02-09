@@ -10,4 +10,8 @@
     <dimen name="base_icon_end_margin">16dp</dimen>
     <dimen name="recycler_view_match_item_team_score_margin_end">4dp</dimen>
     <dimen name="recycler_view_match_item_team_score_margin_start">4dp</dimen>
+    <dimen name="base_large_icon_height">40dp</dimen>
+    <dimen name="base_large_icon_width">40dp</dimen>
+    <dimen name="activity_live_ticker_team_score_margin_start">4dp</dimen>
+    <dimen name="activity_live_ticker_team_score_margin_end">4dp</dimen>
 </resources>
