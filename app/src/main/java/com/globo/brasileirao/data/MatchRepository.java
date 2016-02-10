@@ -16,4 +16,10 @@ public interface MatchRepository {
      */
     Observable<List<Match>> getMatches();
 
+    /**
+     * Refresh repository with latest live ticker entries for a specific match.
+     * @param matchId ticker entries match id.
+     * @return observable that emits no items, only completes successfully if refresh succeeds.
+     */
+    Observable<Void> refreshLiveTicker(int matchId, int limit);
 }

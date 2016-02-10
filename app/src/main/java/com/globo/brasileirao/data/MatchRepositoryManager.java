@@ -2,6 +2,7 @@ package com.globo.brasileirao.data;
 
 import com.globo.brasileirao.data.disk.MatchDiskRepository;
 import com.globo.brasileirao.data.network.MatchNetworkRepository;
+import com.globo.brasileirao.entities.LiveTickerEntry;
 import com.globo.brasileirao.entities.Match;
 
 import java.util.List;
@@ -28,12 +29,8 @@ public class MatchRepositoryManager implements MatchRepository {
         this.diskRepository = diskRepository;
     }
 
-    /**
-     * First go to network if error fallback to disk and emmit network error.
-     * @return observable for available matches.
-     */
     @Override public Observable<List<Match>> getMatches() {
-        return getMatchesFormNetworkAndSaveToDisk()
+        return getMatchesFromNetworkAndSaveToDisk()
                 .onErrorResumeNext(new Func1<Throwable, Observable<? extends List<Match>>>() {
                     @Override public Observable<? extends List<Match>> call(Throwable throwable) {
                         return Observable.concat(diskRepository.getMatches(), Observable.<List<Match>>error(throwable));
@@ -41,10 +38,32 @@ public class MatchRepositoryManager implements MatchRepository {
                 });
     }
 
-    private Observable<List<Match>> getMatchesFormNetworkAndSaveToDisk() {
+    @Override public Observable<Void> refreshLiveTicker(final int matchId, final int limit) {
+        return diskRepository.getLiveTickerEntries(matchId)
+                .first()
+                .flatMap(new Func1<List<LiveTickerEntry>, Observable<List<LiveTickerEntry>>>() {
+                    @Override public Observable<List<LiveTickerEntry>> call(List<LiveTickerEntry> liveTickerEntries) {
+                        return getLiveTickerEntriesFromNetworkAndSaveToDisk(matchId, liveTickerEntries.size(), limit);
+
+                    }
+                })
+                .ignoreElements()
+                .cast(Void.class);
+
+    }
+
+    private Observable<List<Match>> getMatchesFromNetworkAndSaveToDisk() {
         return networkRepository.getMatches().doOnNext(new Action1<List<Match>>() {
             @Override public void call(List<Match> matches) {
                 diskRepository.saveOrOverwriteMatches(matches);
+            }
+        });
+    }
+
+    private Observable<List<LiveTickerEntry>> getLiveTickerEntriesFromNetworkAndSaveToDisk(final int matchId, int skip, int limit) {
+        return networkRepository.getLiveTickerEntries(matchId, skip, limit).doOnNext(new Action1<List<LiveTickerEntry>>() {
+            @Override public void call(List<LiveTickerEntry> liveTickerEntries) {
+                diskRepository.saveOrOverwriteLiveTickerEntries(matchId, liveTickerEntries);
             }
         });
     }

@@ -2,6 +2,7 @@ package com.globo.brasileirao.data;
 
 import com.globo.brasileirao.data.disk.MatchDiskRepository;
 import com.globo.brasileirao.data.network.MatchNetworkRepository;
+import com.globo.brasileirao.entities.LiveTickerEntry;
 import com.globo.brasileirao.entities.Match;
 
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import rx.Observable;
@@ -76,6 +78,58 @@ public class MatchRepositoryManagerTest {
         testSubscriber.assertValue(resultMatches);
         testSubscriber.assertError(IOException.class);
         testSubscriber.assertUnsubscribed();
+    }
+
+    @Test public void refreshLiveTickerNetworkError() throws Exception {
+        Observable<List<LiveTickerEntry>> networkErrorObservable = Observable.error(new IOException());
+        when(networkRepositoryMock.getLiveTickerEntries(1, 0, 10)).thenReturn(networkErrorObservable);
+        when(diskRepositoryMock.getLiveTickerEntries(1)).thenReturn(Observable.just(Collections.<LiveTickerEntry>emptyList()));
+
+        TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
+        repository.refreshLiveTicker(1, 10).subscribe(testSubscriber);
+        testSubscriber.assertError(IOException.class);
+        testSubscriber.assertNoValues();
+        testSubscriber.assertUnsubscribed();
+    }
+
+    @Test public void refreshLiveTickerSkip0() throws Exception {
+        List<LiveTickerEntry> resultList = Arrays.asList(
+                new LiveTickerEntry(1, 23, "test 1"),
+                new LiveTickerEntry(1, 45, "test 2")
+        );
+        ;
+        when(networkRepositoryMock.getLiveTickerEntries(1, 0, 10))
+                .thenReturn(Observable.just(resultList));
+        when(diskRepositoryMock.getLiveTickerEntries(1))
+                .thenReturn(Observable.just(Collections.<LiveTickerEntry>emptyList()));
+
+        TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
+        repository.refreshLiveTicker(1, 10).subscribe(testSubscriber);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
+        testSubscriber.assertNoValues();
+        testSubscriber.assertUnsubscribed();
+        verify(diskRepositoryMock).saveOrOverwriteLiveTickerEntries(1, resultList);
+    }
+
+    @Test public void refreshLiveTickerSkip1() throws Exception {
+        List<LiveTickerEntry> resultList = Arrays.asList(
+                new LiveTickerEntry(1, 23, "test 1"),
+                new LiveTickerEntry(1, 45, "test 2")
+        );
+        when(networkRepositoryMock.getLiveTickerEntries(1, 1, 10))
+                .thenReturn(Observable.just(resultList));
+        when(diskRepositoryMock.getLiveTickerEntries(1))
+                .thenReturn(Observable.just(Collections.singletonList(new LiveTickerEntry(1, 23, "test 0"))));
+
+        TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
+        repository.refreshLiveTicker(1, 10).subscribe(testSubscriber);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
+        testSubscriber.assertNoValues();
+        testSubscriber.assertUnsubscribed();
+        verify(networkRepositoryMock).getLiveTickerEntries(1, 1, 10);
+        verify(diskRepositoryMock).saveOrOverwriteLiveTickerEntries(1, resultList);
     }
 
     private Match getSimpleMatch(int id) {
