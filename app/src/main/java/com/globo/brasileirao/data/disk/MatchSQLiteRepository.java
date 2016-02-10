@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
+import com.globo.brasileirao.entities.LiveTickerEntry;
 import com.globo.brasileirao.entities.Match;
 import com.globo.brasileirao.entities.Team;
 import com.squareup.sqlbrite.BriteDatabase;
@@ -53,6 +54,35 @@ public class MatchSQLiteRepository implements MatchDiskRepository {
         database.delete("matches", "1");
     }
 
+    @Override public Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId) {
+        return database.createQuery("live_ticker_entries", "SELECT * FROM live_ticker_entries WHERE matchId = ?", String.valueOf(matchId))
+                .mapToList(getCursorToLiveTickerEntry());
+    }
+
+    @Override public void saveOrOverwriteLiveTickerEntries(int matchId, List<LiveTickerEntry> liveTickerEntries) {
+        final BriteDatabase.Transaction transaction = database.newTransaction();
+        try {
+            for (LiveTickerEntry liveTickerEntry: liveTickerEntries) {
+                database.insert("live_ticker_entries", getLiveTickerEntryContentValues(matchId, liveTickerEntry), SQLiteDatabase.CONFLICT_REPLACE);
+            }
+            transaction.markSuccessful();
+        } finally {
+            transaction.end();
+        }
+    }
+
+    @Override public void clearLiveTickerEntries(int matchId) {
+        database.delete("live_ticker_entries", "matchId = ?", String.valueOf(matchId));
+    }
+
+    private ContentValues getLiveTickerEntryContentValues(int matchId, LiveTickerEntry liveTickerEntry) {
+        final ContentValues contentValues = new ContentValues();
+        contentValues.put("matchId", matchId);
+        contentValues.put("time", liveTickerEntry.getMatchTime());
+        contentValues.put("description", liveTickerEntry.getDescription());
+        return contentValues;
+    }
+
     @NonNull private ContentValues getMatchContentValues(Match match) {
         final ContentValues contentValues = new ContentValues();
         contentValues.put("matchId", match.getMatchId());
@@ -79,6 +109,16 @@ public class MatchSQLiteRepository implements MatchDiskRepository {
                         cursor.getInt(cursor.getColumnIndex("awayScore")),
                         new Date(cursor.getLong(cursor.getColumnIndex("date"))),
                         cursor.getString(cursor.getColumnIndex("location")));
+            }
+        };
+    }
+
+    private Func1<Cursor, LiveTickerEntry> getCursorToLiveTickerEntry() {
+        return new Func1<Cursor, LiveTickerEntry>() {
+            @Override public LiveTickerEntry call(Cursor cursor) {
+                return new LiveTickerEntry(cursor.getInt(cursor.getColumnIndex("matchId")),
+                        cursor.getInt(cursor.getColumnIndex("time")),
+                        cursor.getString(cursor.getColumnIndex("description")));
             }
         };
     }

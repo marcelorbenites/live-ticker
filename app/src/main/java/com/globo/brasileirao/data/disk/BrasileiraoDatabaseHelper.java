@@ -51,6 +51,22 @@ public class BrasileiraoDatabaseHelper extends SQLiteOpenHelper {
             "date",
             "location");
 
+    private static final String CREATE_TABLE_LIVE_TICKER_ENTRIES = String.format("create table %s (" +
+                    "%s int not null, " +
+                    "%s int not null, " +
+                    "%s text not null, " +
+                    "primary key (%s, %s)," +
+                    "foreign key (%s) references %s(%s));",
+            "live_ticker_entries",
+            "time",
+            "matchId",
+            "description",
+            "time",
+            "matchId",
+            "matchId",
+            "matches",
+            "matchId");
+
     public BrasileiraoDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -59,6 +75,7 @@ public class BrasileiraoDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             db.execSQL(CREATE_TABLE_MATCHES);
+            db.execSQL(CREATE_TABLE_LIVE_TICKER_ENTRIES);
         } catch (SQLiteException exception) {
             exception.printStackTrace();
         }
@@ -67,6 +84,7 @@ public class BrasileiraoDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", "matches"));
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", "live_ticker_entries"));
         onCreate(db);
     }
 }
