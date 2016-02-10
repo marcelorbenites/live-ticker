@@ -13,6 +13,20 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
     </android.support.v4.widget.NestedScrollView>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/activity_live_ticker_swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:background="@color/colorAccent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
