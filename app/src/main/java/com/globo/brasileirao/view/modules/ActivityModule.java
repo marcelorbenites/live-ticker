@@ -1,12 +1,21 @@
-package com.globo.brasileirao.view;
+package com.globo.brasileirao.view.modules;
 
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 
+import com.globo.brasileirao.BuildConfig;
+import com.globo.brasileirao.data.MatchRepository;
+import com.globo.brasileirao.data.MatchRepositoryManager;
+import com.globo.brasileirao.data.disk.MatchDiskRepository;
+import com.globo.brasileirao.data.disk.MatchSQLiteRepository;
+import com.globo.brasileirao.data.network.MatchNetworkRepository;
+import com.globo.brasileirao.data.network.MatchRestRepository;
+import com.globo.brasileirao.data.network.MatchRestService;
 import com.globo.brasileirao.view.image.ImageLoader;
 import com.globo.brasileirao.view.image.PicassoImageLoader;
+import com.squareup.sqlbrite.BriteDatabase;
 
 import java.text.DateFormat;
 
@@ -14,6 +23,7 @@ import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
+import retrofit2.Retrofit;
 
 @Module
 public class ActivityModule {
@@ -24,20 +34,12 @@ public class ActivityModule {
         this.activity = activity;
     }
 
-    @Provides @Named("activity") Context provideContext() {
-        return activity;
-    }
-
     @Provides LayoutInflater provideLayoutInflater() {
         return LayoutInflater.from(activity);
     }
 
     @Provides LinearLayoutManager provideLinearLayoutManager() {
         return new LinearLayoutManager(activity);
-    }
-
-    @Provides ImageLoader provideImageLoader(@Named("application") Context context) {
-        return new PicassoImageLoader(context);
     }
 
     @Provides DateFormat provideDateFormat() {

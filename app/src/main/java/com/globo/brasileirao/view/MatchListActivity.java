@@ -18,10 +18,11 @@ import com.globo.brasileirao.entities.Match;
 import com.globo.brasileirao.exceptions.ThrowableToStringResourceConverter;
 import com.globo.brasileirao.view.adapter.MatchListAdapter;
 import com.globo.brasileirao.view.adapter.OnMatchClickListener;
+import com.globo.brasileirao.view.image.ImageModule;
+import com.globo.brasileirao.view.modules.MatchListModule;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import java.util.List;
 
@@ -62,9 +63,11 @@ public class MatchListActivity extends BaseActivity {
 
     private void inject() {
         DaggerMatchListComponent.builder()
-                .activityComponent(getActivityComponent())
-                .dataModule(new DataModule())
+                .applicationComponent(getApplicationComponent())
+                .activityModule(getActivityModule())
                 .matchListModule(new MatchListModule(TEAM_ICON_WIDTH_DP, TEAM_ICON_HEIGHT_DP, R.mipmap.ic_launcher))
+                .imageModule(new ImageModule())
+                .dataModule(new DataModule())
                 .build()
                 .injectMatchListActivity(this);
     }

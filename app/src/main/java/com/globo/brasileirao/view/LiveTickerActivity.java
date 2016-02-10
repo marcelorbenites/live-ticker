@@ -7,8 +7,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.globo.brasileirao.R;
+import com.globo.brasileirao.data.DataModule;
 import com.globo.brasileirao.entities.Match;
 import com.globo.brasileirao.view.image.ImageLoader;
+import com.globo.brasileirao.view.image.ImageModule;
 import com.globo.brasileirao.view.utils.UnitConverter;
 import com.jakewharton.rxbinding.support.v7.widget.RxToolbar;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -68,7 +70,9 @@ public class LiveTickerActivity extends BaseActivity {
 
     private void inject() {
         DaggerLiveTickerComponent.builder()
-                .activityComponent(getActivityComponent())
+                .applicationComponent(getApplicationComponent())
+                .activityModule(getActivityModule())
+                .imageModule(new ImageModule())
                 .build()
                 .injectLiveTickerActivity(this);
     }
