@@ -1,5 +1,6 @@
 package com.globo.brasileirao.data.network;
 
+import com.globo.brasileirao.entities.LiveTickerEntry;
 import com.globo.brasileirao.entities.Match;
 
 import java.util.List;
@@ -26,5 +27,9 @@ public class MatchRestRepository implements MatchNetworkRepository {
 
     @Override public Observable<List<Match>> getMatches() {
         return restService.getMatches(apiKey);
+    }
+
+    @Override public Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId, int skip, int limit) {
+        return restService.getLiveTickerEntries("{\"matchId\":"+matchId+"}", skip, limit, apiKey);
     }
 }

@@ -1,6 +1,7 @@
 package com.globo.brasileirao.data.network;
 
 
+import com.globo.brasileirao.entities.LiveTickerEntry;
 import com.globo.brasileirao.entities.Match;
 
 import org.junit.Test;
@@ -19,7 +20,7 @@ import rx.observers.TestSubscriber;
 import static junit.framework.TestCase.assertEquals;
 
 
-public class MatchRestServiceTest {
+public class MatchRestServiceIntegrationTest {
 
     @Test public void getMatchesSuccess() throws Exception {
 
@@ -227,6 +228,59 @@ public class MatchRestServiceTest {
 
         RecordedRequest request = server.takeRequest();
         assertEquals("/api/1/databases/heroku_wm3w0h9v/collections/matches?apiKey=MyApiKey", request.getPath());
+        assertEquals("GET", request.getMethod());
+
+        server.shutdown();
+    }
+
+    @Test public void getLiveTickerEntriesSuccess() throws Exception {
+        final MockWebServer server = new MockWebServer();
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("[  \n" +
+                        "   {  \n" +
+                        "      \"_id\":{  \n" +
+                        "         \"$oid\":\"56ba275ee4b0d15f5fdd8dfc\"\n" +
+                        "      },\n" +
+                        "      \"time\":1,\n" +
+                        "      \"matchId\":1,\n" +
+                        "      \"description\":\"Começa o jogo!\"\n" +
+                        "   },\n" +
+                        "   {  \n" +
+                        "      \"_id\":{  \n" +
+                        "         \"$oid\":\"56ba27a2e4b0d15f5fdd8e1c\"\n" +
+                        "      },\n" +
+                        "      \"time\":3,\n" +
+                        "      \"matchId\":1,\n" +
+                        "      \"description\":\"Giuliano fica com a sobra na entrada da área e solta a bomba. A bola vai sobre a meta do Flumninense.\"\n" +
+                        "   },\n" +
+                        "   {  \n" +
+                        "      \"_id\":{  \n" +
+                        "         \"$oid\":\"56ba27cee4b0d15f5fdd8e22\"\n" +
+                        "      },\n" +
+                        "      \"time\":7,\n" +
+                        "      \"matchId\":1,\n" +
+                        "      \"description\":\"O jogo é todo do Grêmio neste início. O Fluminense se defende como pode.\"\n" +
+                        "   }\n" +
+                        "]"));
+        server.start();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(server.url("/"))
+                .addConverterFactory(JacksonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(new OkHttpClient())
+                .build();
+
+        TestSubscriber<List<LiveTickerEntry>> testSubscriber = new TestSubscriber<>();
+        retrofit.create(MatchRestService.class).getLiveTickerEntries("{\"matchId\":1}", 0, 3, "MyApiKey").subscribe(testSubscriber);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(1);
+        assertEquals(3, testSubscriber.getOnNextEvents().get(0).size());
+        testSubscriber.assertCompleted();
+
+        RecordedRequest request = server.takeRequest();
+        assertEquals("/api/1/databases/heroku_wm3w0h9v/collections/liveTickerEntries?q={%22matchId%22:1}&sk=0&l=3&apiKey=MyApiKey", request.getPath());
         assertEquals("GET", request.getMethod());
 
         server.shutdown();
