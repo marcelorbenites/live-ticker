@@ -13,6 +13,8 @@ import com.globo.brasileirao.data.disk.MatchSQLiteRepository;
 import com.globo.brasileirao.data.network.MatchNetworkRepository;
 import com.globo.brasileirao.data.network.MatchRestRepository;
 import com.globo.brasileirao.data.network.MatchRestService;
+import com.globo.brasileirao.exceptions.NetworkErrorToStringResourceConverter;
+import com.globo.brasileirao.exceptions.ThrowableToStringResourceConverter;
 import com.globo.brasileirao.view.image.ImageLoader;
 import com.globo.brasileirao.view.image.PicassoImageLoader;
 import com.squareup.sqlbrite.BriteDatabase;
@@ -44,5 +46,9 @@ public class ActivityModule {
 
     @Provides DateFormat provideDateFormat() {
         return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+    }
+
+    @Provides ThrowableToStringResourceConverter provideThrowableToStringResourceConverter() {
+        return new NetworkErrorToStringResourceConverter();
     }
 }

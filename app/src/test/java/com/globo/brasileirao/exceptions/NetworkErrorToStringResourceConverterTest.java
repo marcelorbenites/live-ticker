@@ -12,10 +12,10 @@ import java.sql.SQLException;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MatchListThrowableToStringResourceConverterTest {
+public class NetworkErrorToStringResourceConverterTest {
 
     @Test public void convertToErrorMessage() throws Exception {
-        MatchListThrowableToStringResourceConverter converter = new MatchListThrowableToStringResourceConverter();
+        NetworkErrorToStringResourceConverter converter = new NetworkErrorToStringResourceConverter();
         assertEquals(R.string.activity_match_list_network_error, converter.convert(new IOException()));
         assertEquals(R.string.activity_match_list_unknown_error, converter.convert(new SQLException()));
     }

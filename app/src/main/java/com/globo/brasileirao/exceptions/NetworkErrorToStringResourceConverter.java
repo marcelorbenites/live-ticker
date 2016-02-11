@@ -4,7 +4,7 @@ import com.globo.brasileirao.R;
 
 import java.io.IOException;
 
-public class MatchListThrowableToStringResourceConverter implements ThrowableToStringResourceConverter {
+public class NetworkErrorToStringResourceConverter implements ThrowableToStringResourceConverter {
 
     @Override public int convert(Throwable throwable) {
         if (throwable instanceof IOException) {

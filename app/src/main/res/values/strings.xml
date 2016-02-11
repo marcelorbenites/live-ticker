@@ -4,4 +4,7 @@
     <string name="activity_match_list_unknown_error">Oops something went wrong</string>
     <string name="activity_match_list_empty_list_text">Could not load matches</string>
     <string name="activity_live_ticker_label">Live Ticker</string>
+    <string name="activity_live_ticker_list_empty_text">No items yet</string>
+    <string name="activity_live_ticker_refresh_to_top_snackbar">New items available</string>
+    <string name="activity_live_ticker_refresh_to_top_button">top</string>
 </resources>
