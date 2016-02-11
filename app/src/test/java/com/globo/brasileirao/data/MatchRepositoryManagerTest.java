@@ -18,6 +18,7 @@ import java.util.List;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -130,6 +131,12 @@ public class MatchRepositoryManagerTest {
         testSubscriber.assertUnsubscribed();
         verify(networkRepositoryMock).getLiveTickerEntries(1, 1, 10);
         verify(diskRepositoryMock).saveOrOverwriteLiveTickerEntries(1, resultList);
+    }
+
+    @Test public void getLiveTickerEntries() throws Exception {
+        Observable<List<LiveTickerEntry>> emptyObservable = Observable.empty();
+        when(diskRepositoryMock.getLiveTickerEntries(1)).thenReturn(emptyObservable);
+        assertEquals(emptyObservable, repository.getLiveTickerEntries(1));
     }
 
     private Match getSimpleMatch(int id) {

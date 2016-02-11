@@ -1,5 +1,6 @@
 package com.globo.brasileirao.data;
 
+import com.globo.brasileirao.entities.LiveTickerEntry;
 import com.globo.brasileirao.entities.Match;
 
 import java.util.List;
@@ -23,4 +24,11 @@ public interface MatchRepository {
      * @return observable that emits no items, only completes successfully if refresh succeeds.
      */
     Observable<Void> refreshLiveTicker(int matchId, int limit);
+
+    /**
+     * @return observable for live ticker entries stored in repository.
+     */
+    Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId);
+
+
 }

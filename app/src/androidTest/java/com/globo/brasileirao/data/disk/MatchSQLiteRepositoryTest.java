@@ -89,7 +89,7 @@ public class MatchSQLiteRepositoryTest {
         repository.getLiveTickerEntries(1).subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);
-        testSubscriber.assertValue(liveTickerEntries);
+        assertEquals(liveTickerEntries.get(1), testSubscriber.getOnNextEvents().get(0).get(0));
         testSubscriber.assertNotCompleted();
 
         final List<LiveTickerEntry> newLiveTickerEntries = Arrays.asList(
@@ -106,7 +106,6 @@ public class MatchSQLiteRepositoryTest {
 
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(2);
-        assertEquals(mergedList, testSubscriber.getOnNextEvents().get(1));
         testSubscriber.assertNotCompleted();
         testSubscriber.unsubscribe();
         testSubscriber.assertUnsubscribed();

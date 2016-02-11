@@ -52,6 +52,10 @@ public class MatchRepositoryManager implements MatchRepository {
 
     }
 
+    @Override public Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId) {
+        return diskRepository.getLiveTickerEntries(matchId);
+    }
+
     private Observable<List<Match>> getMatchesFromNetworkAndSaveToDisk() {
         return networkRepository.getMatches().doOnNext(new Action1<List<Match>>() {
             @Override public void call(List<Match> matches) {

@@ -55,7 +55,7 @@ public class MatchSQLiteRepository implements MatchDiskRepository {
     }
 
     @Override public Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId) {
-        return database.createQuery("live_ticker_entries", "SELECT * FROM live_ticker_entries WHERE matchId = ?", String.valueOf(matchId))
+        return database.createQuery("live_ticker_entries", "SELECT * FROM live_ticker_entries WHERE matchId = ? ORDER BY time DESC", String.valueOf(matchId))
                 .mapToList(getCursorToLiveTickerEntry());
     }
 
