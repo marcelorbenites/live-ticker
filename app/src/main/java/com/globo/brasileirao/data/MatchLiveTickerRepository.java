@@ -20,6 +20,8 @@ public interface MatchLiveTickerRepository {
 
     /**
      * @return observable for live ticker entries stored in repository.
+     * Note that this observable will not complete, any changes to underlying data will
+     * cause the observable to emmit updated items.
      */
     Observable<List<LiveTickerEntry>> getLiveTickerEntries();
 

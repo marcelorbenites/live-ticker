@@ -79,6 +79,16 @@ public class MatchListActivity extends BaseActivity {
                 startActivity(new Intent(MatchListActivity.this, LiveTickerActivity.class).putExtra(LiveTickerActivity.EXTRA_MATCH, match));
             }
         });
+        repository.getMatches()
+                .compose(this.<List<Match>>bindUntilEvent(ActivityEvent.PAUSE))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<Match>>() {
+                    @Override public void call(List<Match> matches) {
+                        adapter.refresh(matches);
+                        updateListVisibility();
+                    }
+                });
         RxRecyclerView.scrollStateChanges(list)
                 .compose(this.<Integer>bindUntilEvent(ActivityEvent.PAUSE))
                 .subscribe(new Action1<Integer>() {
@@ -105,8 +115,8 @@ public class MatchListActivity extends BaseActivity {
     }
 
     private void refresh() {
-        repository.getMatches()
-                .compose(this.<List<Match>>bindUntilEvent(ActivityEvent.PAUSE))
+        repository.refreshMatches()
+                .compose(this.<Void>bindUntilEvent(ActivityEvent.PAUSE))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -114,14 +124,12 @@ public class MatchListActivity extends BaseActivity {
                         swipeRefreshLayout.post(new Runnable() {
                             @Override public void run() {
                                 swipeRefreshLayout.setRefreshing(false);
-                                updateListVisibility();
                             }
                         });
                     }
                 })
-                .subscribe(new Action1<List<Match>>() {
-                    @Override public void call(List<Match> matches) {
-                        adapter.refresh(matches);
+                .subscribe(new Action1<Void>() {
+                    @Override public void call(Void aVoid) {
                     }
                 }, new Action1<Throwable>() {
                     @Override public void call(Throwable throwable) {

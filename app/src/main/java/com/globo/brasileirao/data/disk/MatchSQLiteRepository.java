@@ -26,16 +26,8 @@ public class MatchSQLiteRepository implements MatchDiskRepository {
     }
 
     @Override public Observable<List<Match>> getMatches() {
-        return database.createQuery("matches", "SELECT * FROM matches")
-                .mapToList(getCursorToMatch())
-                // use first in order to force completion and default
-                // to avoid an exception when there are no matches stored.
-                .firstOrDefault(Collections.<Match>emptyList())
-                .filter(new Func1<List<Match>, Boolean>() {
-                    @Override public Boolean call(List<Match> matches) {
-                        return !matches.isEmpty();
-                    }
-                });
+        return database.createQuery("matches", "SELECT * FROM matches ORDER BY date ASC")
+                .mapToList(getCursorToMatch());
     }
 
     @Override public void saveOrOverwriteMatches(List<Match> matches) {

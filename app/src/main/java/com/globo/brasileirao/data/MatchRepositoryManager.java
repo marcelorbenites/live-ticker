@@ -30,12 +30,20 @@ public class MatchRepositoryManager implements MatchRepository {
     }
 
     @Override public Observable<List<Match>> getMatches() {
-        return getMatchesFromNetworkAndSaveToDisk()
-                .onErrorResumeNext(new Func1<Throwable, Observable<? extends List<Match>>>() {
-                    @Override public Observable<? extends List<Match>> call(Throwable throwable) {
-                        return Observable.concat(diskRepository.getMatches(), Observable.<List<Match>>error(throwable));
+        return diskRepository.getMatches();
+    }
+
+    @Override public Observable<Void> refreshMatches() {
+        return diskRepository.getMatches()
+                .first()
+                .flatMap(new Func1<List<Match>, Observable<List<Match>>>() {
+                    @Override public Observable<List<Match>> call(List<Match> matches) {
+                        return getMatchesFromNetworkAndSaveToDisk();
+
                     }
-                });
+                })
+                .ignoreElements()
+                .cast(Void.class);
     }
 
     @Override public Observable<Void> refreshLiveTicker(final int matchId, final int limit) {

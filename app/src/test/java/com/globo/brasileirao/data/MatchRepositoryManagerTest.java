@@ -19,7 +19,6 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,48 +36,37 @@ public class MatchRepositoryManagerTest {
         repository = new MatchRepositoryManager(networkRepositoryMock, diskRepositoryMock);
     }
 
-    @Test public void getMatchesNetworkErrorEmptyDisk() throws Exception {
+    @Test public void getMatches() throws Exception {
+        repository.getMatches();
+        verify(diskRepositoryMock).getMatches();
+    }
 
+    @Test public void refreshMatchesNetworkError() throws Exception {
         Observable<List<Match>> networkErrorObservable = Observable.error(new IOException());
         when(networkRepositoryMock.getMatches()).thenReturn(networkErrorObservable);
+        when(diskRepositoryMock.getMatches()).thenReturn(Observable.just(Collections.<Match>emptyList()));
 
-        Observable<List<Match>> diskEmptyObservable = Observable.empty();
-        when(diskRepositoryMock.getMatches()).thenReturn(diskEmptyObservable);
-
-        TestSubscriber<List<Match>> testSubscriber = new TestSubscriber<>();
-        repository.getMatches().subscribe(testSubscriber);
+        TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
+        repository.refreshMatches().subscribe(testSubscriber);
         testSubscriber.assertError(IOException.class);
         testSubscriber.assertNoValues();
         testSubscriber.assertUnsubscribed();
     }
 
     @Test public void getMatchesNetworkSuccess() throws Exception {
+        List<Match> resultList = Arrays.asList(getSimpleMatch(1), getSimpleMatch(2));
+        when(networkRepositoryMock.getMatches())
+                .thenReturn(Observable.just(resultList));
+        when(diskRepositoryMock.getMatches())
+                .thenReturn(Observable.just(Collections.<Match>emptyList()));
 
-        List<Match> resultMatches = Arrays.asList(getSimpleMatch(1), getSimpleMatch(2));
-        Observable<List<Match>> networkObservable = Observable.just(resultMatches);
-        when(networkRepositoryMock.getMatches()).thenReturn(networkObservable);
-
-        TestSubscriber<List<Match>> testSubscriber = new TestSubscriber<>();
-        repository.getMatches().subscribe(testSubscriber);
-        testSubscriber.assertValue(resultMatches);
+        TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
+        repository.refreshMatches().subscribe(testSubscriber);
+        testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
-        verify(diskRepositoryMock).saveOrOverwriteMatches(resultMatches);
-    }
-
-    @Test public void getMatchesNetworkErrorFullDisk() throws Exception {
-
-        Observable<List<Match>> networkErrorObservable = Observable.error(new IOException());
-        when(networkRepositoryMock.getMatches()).thenReturn(networkErrorObservable);
-
-        List<Match> resultMatches = Arrays.asList(getSimpleMatch(1), getSimpleMatch(2));
-        Observable<List<Match>> diskFullObservable = Observable.just(resultMatches);
-        when(diskRepositoryMock.getMatches()).thenReturn(diskFullObservable);
-
-        TestSubscriber<List<Match>> testSubscriber = new TestSubscriber<>();
-        repository.getMatches().subscribe(testSubscriber);
-        testSubscriber.assertValue(resultMatches);
-        testSubscriber.assertError(IOException.class);
+        testSubscriber.assertNoValues();
         testSubscriber.assertUnsubscribed();
+        verify(diskRepositoryMock).saveOrOverwriteMatches(resultList);
     }
 
     @Test public void refreshLiveTickerNetworkError() throws Exception {

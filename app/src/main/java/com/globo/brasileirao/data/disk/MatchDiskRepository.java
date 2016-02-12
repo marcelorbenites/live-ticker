@@ -13,8 +13,9 @@ import rx.Observable;
 public interface MatchDiskRepository {
 
     /**
-     * @return observable that return all matches stored in repository and completes. If no match is found
-     * observable completes without emitting items.
+     * @return observable that return all matches stored in repository.
+     * Note that this observable will not complete, any changes to underlying data will
+     * cause the observable to emmit updated items.
      */
     Observable<List<Match>> getMatches();
 

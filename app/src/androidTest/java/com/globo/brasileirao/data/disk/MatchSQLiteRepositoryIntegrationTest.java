@@ -25,7 +25,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
-public class MatchSQLiteRepositoryTest {
+public class MatchSQLiteRepositoryIntegrationTest {
 
     private MatchSQLiteRepository repository;
 
@@ -57,15 +57,20 @@ public class MatchSQLiteRepositoryTest {
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);
         assertEquals(matches, testSubscriber.getOnNextEvents().get(0));
-        testSubscriber.assertCompleted();
+        testSubscriber.assertNotCompleted();
+        testSubscriber.unsubscribe();
+        testSubscriber.assertUnsubscribed();
 
         repository.clearMatches();
 
         TestSubscriber<List<Match>> testSubscriber2 = new TestSubscriber<>();
         repository.getMatches().subscribe(testSubscriber2);
         testSubscriber2.assertNoErrors();
-        testSubscriber2.assertNoValues();
-        testSubscriber2.assertCompleted();
+        testSubscriber2.assertValueCount(1);
+        assertTrue(testSubscriber2.getOnNextEvents().get(0).isEmpty());
+        testSubscriber2.assertNotCompleted();
+        testSubscriber2.unsubscribe();
+        testSubscriber2.assertUnsubscribed();
     }
 
     @Test public void saveLiveTickerEntriesAndQuery() throws Exception {
@@ -126,7 +131,11 @@ public class MatchSQLiteRepositoryTest {
         TestSubscriber<List<Match>> testSubscriber3 = new TestSubscriber<>();
         repository.getMatches().subscribe(testSubscriber3);
         testSubscriber3.assertNoErrors();
-        testSubscriber3.assertNoValues();
-        testSubscriber3.assertCompleted();
+        testSubscriber3.assertValueCount(1);
+        assertTrue(testSubscriber2.getOnNextEvents().get(0).isEmpty());
+        testSubscriber3.assertNotCompleted();
+        testSubscriber3.unsubscribe();
+        testSubscriber3.assertUnsubscribed();
+
     }
 }

@@ -19,7 +19,7 @@ public interface MatchNetworkRepository {
     Observable<List<Match>> getMatches();
 
     /**
-     * Get live ticker entries for a specific match.
+     * Get live ticker entries for a specific match available on network.
      * @param matchId ticker entries match id.
      * @param skip number of live ticker entries to skip.
      * @param limit max number of live ticker entries to return.

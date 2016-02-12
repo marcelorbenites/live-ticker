@@ -13,9 +13,17 @@ import rx.Observable;
 public interface MatchRepository {
 
     /**
-     * @return observable for matches stored in repository.
+     * @return observable that return all matches stored in repository.
+     * Note that this observable will not complete, any changes to underlying data will
+     * cause the observable to emmit updated items.
      */
     Observable<List<Match>> getMatches();
+
+    /**
+     * Refresh repository with latest matches.
+     * @return observable that emits no items, only completes successfully if refresh succeeds.
+     */
+    Observable<Void> refreshMatches();
 
     /**
      * Refresh repository with latest live ticker entries for a specific match.
@@ -27,6 +35,8 @@ public interface MatchRepository {
 
     /**
      * @return observable for live ticker entries stored in repository.
+     * Note that this observable will not complete, any changes to underlying data will
+     * cause the observable to emmit updated items.
      */
     Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId);
 
