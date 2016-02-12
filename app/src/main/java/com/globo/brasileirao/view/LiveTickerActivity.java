@@ -144,7 +144,7 @@ public class LiveTickerActivity extends BaseActivity {
     }
 
     private void refresh() {
-        repository.refreshLiveTicker(10)
+        repository.refreshLiveTicker()
                 .compose(this.<Void>bindUntilEvent(ActivityEvent.PAUSE))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

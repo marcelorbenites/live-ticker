@@ -17,8 +17,8 @@ public class LiveTickerRepositoryManager implements MatchLiveTickerRepository {
         this.matchRepository = matchRepository;
     }
 
-    @Override public Observable<Void> refreshLiveTicker(int limit) {
-        return matchRepository.refreshLiveTicker(match.getMatchId(), limit);
+    @Override public Observable<Void> refreshLiveTicker() {
+        return matchRepository.refreshLiveTicker(match.getMatchId());
     }
 
     @Override public Observable<List<LiveTickerEntry>> getLiveTickerEntries() {

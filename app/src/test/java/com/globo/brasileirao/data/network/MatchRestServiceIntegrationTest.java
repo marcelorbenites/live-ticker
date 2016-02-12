@@ -273,14 +273,14 @@ public class MatchRestServiceIntegrationTest {
                 .build();
 
         TestSubscriber<List<LiveTickerEntry>> testSubscriber = new TestSubscriber<>();
-        retrofit.create(MatchRestService.class).getLiveTickerEntries("{\"matchId\":1}", 0, 3, "MyApiKey").subscribe(testSubscriber);
+        retrofit.create(MatchRestService.class).getLiveTickerEntries("{\"matchId\":1}", 0, "MyApiKey").subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);
         assertEquals(3, testSubscriber.getOnNextEvents().get(0).size());
         testSubscriber.assertCompleted();
 
         RecordedRequest request = server.takeRequest();
-        assertEquals("/api/1/databases/heroku_wm3w0h9v/collections/liveTickerEntries?q={%22matchId%22:1}&sk=0&l=3&apiKey=MyApiKey", request.getPath());
+        assertEquals("/api/1/databases/heroku_wm3w0h9v/collections/liveTickerEntries?q={%22matchId%22:1}&sk=0&apiKey=MyApiKey", request.getPath());
         assertEquals("GET", request.getMethod());
 
         server.shutdown();

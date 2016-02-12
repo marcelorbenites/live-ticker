@@ -71,11 +71,11 @@ public class MatchRepositoryManagerTest {
 
     @Test public void refreshLiveTickerNetworkError() throws Exception {
         Observable<List<LiveTickerEntry>> networkErrorObservable = Observable.error(new IOException());
-        when(networkRepositoryMock.getLiveTickerEntries(1, 0, 10)).thenReturn(networkErrorObservable);
+        when(networkRepositoryMock.getLiveTickerEntries(1, 0)).thenReturn(networkErrorObservable);
         when(diskRepositoryMock.getLiveTickerEntries(1)).thenReturn(Observable.just(Collections.<LiveTickerEntry>emptyList()));
 
         TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
-        repository.refreshLiveTicker(1, 10).subscribe(testSubscriber);
+        repository.refreshLiveTicker(1).subscribe(testSubscriber);
         testSubscriber.assertError(IOException.class);
         testSubscriber.assertNoValues();
         testSubscriber.assertUnsubscribed();
@@ -87,13 +87,13 @@ public class MatchRepositoryManagerTest {
                 new LiveTickerEntry(1, 45, "test 2")
         );
         ;
-        when(networkRepositoryMock.getLiveTickerEntries(1, 0, 10))
+        when(networkRepositoryMock.getLiveTickerEntries(1, 0))
                 .thenReturn(Observable.just(resultList));
         when(diskRepositoryMock.getLiveTickerEntries(1))
                 .thenReturn(Observable.just(Collections.<LiveTickerEntry>emptyList()));
 
         TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
-        repository.refreshLiveTicker(1, 10).subscribe(testSubscriber);
+        repository.refreshLiveTicker(1).subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
         testSubscriber.assertNoValues();
@@ -106,18 +106,18 @@ public class MatchRepositoryManagerTest {
                 new LiveTickerEntry(1, 23, "test 1"),
                 new LiveTickerEntry(1, 45, "test 2")
         );
-        when(networkRepositoryMock.getLiveTickerEntries(1, 1, 10))
+        when(networkRepositoryMock.getLiveTickerEntries(1, 1))
                 .thenReturn(Observable.just(resultList));
         when(diskRepositoryMock.getLiveTickerEntries(1))
                 .thenReturn(Observable.just(Collections.singletonList(new LiveTickerEntry(1, 23, "test 0"))));
 
         TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
-        repository.refreshLiveTicker(1, 10).subscribe(testSubscriber);
+        repository.refreshLiveTicker(1).subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
         testSubscriber.assertNoValues();
         testSubscriber.assertUnsubscribed();
-        verify(networkRepositoryMock).getLiveTickerEntries(1, 1, 10);
+        verify(networkRepositoryMock).getLiveTickerEntries(1, 1);
         verify(diskRepositoryMock).saveOrOverwriteLiveTickerEntries(1, resultList);
     }
 

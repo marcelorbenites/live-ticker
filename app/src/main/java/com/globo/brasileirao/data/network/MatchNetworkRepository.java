@@ -22,8 +22,7 @@ public interface MatchNetworkRepository {
      * Get live ticker entries for a specific match available on network.
      * @param matchId ticker entries match id.
      * @param skip number of live ticker entries to skip.
-     * @param limit max number of live ticker entries to return.
      * @return observable for live ticker entries available on network.
      */
-    Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId, int skip, int limit);
+    Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId, int skip);
 }

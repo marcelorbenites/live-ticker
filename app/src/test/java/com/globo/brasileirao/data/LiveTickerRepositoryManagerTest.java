@@ -23,8 +23,8 @@ public class LiveTickerRepositoryManagerTest {
 
     @Test public void refreshLiveTicker() throws Exception {
         when(matchMock.getMatchId()).thenReturn(34);
-        repository.refreshLiveTicker(10);
-        verify(matchRepositoryMock).refreshLiveTicker(34, 10);
+        repository.refreshLiveTicker();
+        verify(matchRepositoryMock).refreshLiveTicker(34);
     }
 
     @Test public void getLiveTickerEntries() throws Exception {

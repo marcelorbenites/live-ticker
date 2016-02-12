@@ -13,10 +13,9 @@ public interface MatchLiveTickerRepository {
 
     /**
      * Refresh repository with latest live ticker entries for a specific match.
-     * @param limit number of latest live ticker items to be refreshed.
      * @return observable that emits no items, only completes successfully if refresh succeeds.
      */
-    Observable<Void> refreshLiveTicker(int limit);
+    Observable<Void> refreshLiveTicker();
 
     /**
      * @return observable for live ticker entries stored in repository.

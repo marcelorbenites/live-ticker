@@ -25,10 +25,9 @@ public interface MatchRestService {
      * Get live ticker entries for specific match from mongolab using apiKey.
      * @param query used to filter the ticker entries. Refer to <a href="http://docs.mongolab.com/data-api/">http://docs.mongolab.com/data-api/</a>
      * @param skip number of entries to be skiped. Useful for pagination.
-     * @param limit max number of entries to be returned.
      * @param apiKey mongolab api key.
      * @return observable for live ticker entries stored in mongolab.
      */
-    @GET("/api/1/databases/heroku_wm3w0h9v/collections/liveTickerEntries") Observable<List<LiveTickerEntry>> getLiveTickerEntries(@Query("q") String query, @Query("sk") int skip, @Query("l") int limit, @Query("apiKey") String apiKey);
+    @GET("/api/1/databases/heroku_wm3w0h9v/collections/liveTickerEntries") Observable<List<LiveTickerEntry>> getLiveTickerEntries(@Query("q") String query, @Query("sk") int skip, @Query("apiKey") String apiKey);
 
 }
