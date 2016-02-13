@@ -31,7 +31,7 @@ public class MatchRestRepositoryTest {
     }
 
     @Test public void getLiveTickerEntries() throws Exception {
-        restRepository.getLiveTickerEntries(1, 0);
-        verify(restServiceMock).getLiveTickerEntries("{\"matchId\":1}", 0 , "MyApiKey");
+        restRepository.getLiveTickerEntries(1);
+        verify(restServiceMock).getLiveTickerEntries("{\"matchId\":1}", "MyApiKey");
     }
 }

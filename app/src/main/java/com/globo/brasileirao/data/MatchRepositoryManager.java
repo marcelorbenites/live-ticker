@@ -67,8 +67,7 @@ public class MatchRepositoryManager implements MatchRepository {
                 .first()
                 .flatMap(new Func1<List<LiveTickerEntry>, Observable<List<LiveTickerEntry>>>() {
                     @Override public Observable<List<LiveTickerEntry>> call(List<LiveTickerEntry> liveTickerEntries) {
-                        // Skip live ticker entries that are already stored in the database
-                        return getLiveTickerEntriesFromNetworkAndSaveToDisk(matchId, liveTickerEntries.size());
+                        return getLiveTickerEntriesFromNetworkAndSaveToDisk(matchId);
 
                     }
                 })
@@ -89,8 +88,8 @@ public class MatchRepositoryManager implements MatchRepository {
         });
     }
 
-    private Observable<List<LiveTickerEntry>> getLiveTickerEntriesFromNetworkAndSaveToDisk(final int matchId, int skip) {
-        return networkRepository.getLiveTickerEntries(matchId, skip).doOnNext(new Action1<List<LiveTickerEntry>>() {
+    private Observable<List<LiveTickerEntry>> getLiveTickerEntriesFromNetworkAndSaveToDisk(final int matchId) {
+        return networkRepository.getLiveTickerEntries(matchId).doOnNext(new Action1<List<LiveTickerEntry>>() {
             @Override public void call(List<LiveTickerEntry> liveTickerEntries) {
                 diskRepository.saveOrOverwriteLiveTickerEntries(matchId, liveTickerEntries);
             }

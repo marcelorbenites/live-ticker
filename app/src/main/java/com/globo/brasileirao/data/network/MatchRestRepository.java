@@ -33,7 +33,7 @@ public class MatchRestRepository implements MatchNetworkRepository {
         return restService.getMatch("{\"matchId\":"+match+"}", apiKey);
     }
 
-    @Override public Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId, int skip) {
-        return restService.getLiveTickerEntries("{\"matchId\":"+matchId+"}", skip, apiKey);
+    @Override public Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId) {
+        return restService.getLiveTickerEntries("{\"matchId\":"+matchId+"}", apiKey);
     }
 }

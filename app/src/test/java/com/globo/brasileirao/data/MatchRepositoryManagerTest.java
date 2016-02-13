@@ -90,7 +90,7 @@ public class MatchRepositoryManagerTest {
 
     @Test public void refreshLiveTickerNetworkError() throws Exception {
         Observable<List<LiveTickerEntry>> networkErrorObservable = Observable.error(new IOException());
-        when(networkRepositoryMock.getLiveTickerEntries(1, 0)).thenReturn(networkErrorObservable);
+        when(networkRepositoryMock.getLiveTickerEntries(1)).thenReturn(networkErrorObservable);
         when(diskRepositoryMock.getLiveTickerEntries(1)).thenReturn(Observable.just(Collections.<LiveTickerEntry>emptyList()));
 
         TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
@@ -106,7 +106,7 @@ public class MatchRepositoryManagerTest {
                 new LiveTickerEntry(1, 45, "test 2")
         );
 
-        when(networkRepositoryMock.getLiveTickerEntries(1, 0))
+        when(networkRepositoryMock.getLiveTickerEntries(1))
                 .thenReturn(Observable.just(resultList));
         when(diskRepositoryMock.getLiveTickerEntries(1))
                 .thenReturn(Observable.just(Collections.<LiveTickerEntry>emptyList()));
@@ -125,7 +125,7 @@ public class MatchRepositoryManagerTest {
                 new LiveTickerEntry(1, 23, "test 1"),
                 new LiveTickerEntry(1, 45, "test 2")
         );
-        when(networkRepositoryMock.getLiveTickerEntries(1, 1))
+        when(networkRepositoryMock.getLiveTickerEntries(1))
                 .thenReturn(Observable.just(resultList));
         when(diskRepositoryMock.getLiveTickerEntries(1))
                 .thenReturn(Observable.just(Collections.singletonList(new LiveTickerEntry(1, 23, "test 0"))));
@@ -136,7 +136,7 @@ public class MatchRepositoryManagerTest {
         testSubscriber.assertCompleted();
         testSubscriber.assertNoValues();
         testSubscriber.assertUnsubscribed();
-        verify(networkRepositoryMock).getLiveTickerEntries(1, 1);
+        verify(networkRepositoryMock).getLiveTickerEntries(1);
         verify(diskRepositoryMock).saveOrOverwriteLiveTickerEntries(1, resultList);
     }
 
