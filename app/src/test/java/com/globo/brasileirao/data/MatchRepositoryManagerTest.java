@@ -13,6 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import rx.Observable;
@@ -41,6 +42,11 @@ public class MatchRepositoryManagerTest {
         verify(diskRepositoryMock).getMatches();
     }
 
+    @Test public void getMatch() throws Exception {
+        repository.getMatch(1);
+        verify(diskRepositoryMock).getMatch(1);
+    }
+
     @Test public void refreshMatchesNetworkError() throws Exception {
         Observable<List<Match>> networkErrorObservable = Observable.error(new IOException());
         when(networkRepositoryMock.getMatches()).thenReturn(networkErrorObservable);
@@ -48,6 +54,19 @@ public class MatchRepositoryManagerTest {
 
         TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
         repository.refreshMatches().subscribe(testSubscriber);
+        testSubscriber.assertError(IOException.class);
+        testSubscriber.assertNoValues();
+        testSubscriber.assertUnsubscribed();
+    }
+
+    @Test public void refreshMatchNetworkError() throws Exception {
+        Observable<Match> networkErrorObservable = Observable.error(new IOException());
+        when(networkRepositoryMock.getMatch(5)).thenReturn(networkErrorObservable);
+        Match resultMatch = new Match(5, null, null, 4, 5, new Date(), "");
+        when(diskRepositoryMock.getMatch(5)).thenReturn(Observable.just(resultMatch));
+
+        TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
+        repository.refreshMatch(5).subscribe(testSubscriber);
         testSubscriber.assertError(IOException.class);
         testSubscriber.assertNoValues();
         testSubscriber.assertUnsubscribed();
@@ -75,7 +94,7 @@ public class MatchRepositoryManagerTest {
         when(diskRepositoryMock.getLiveTickerEntries(1)).thenReturn(Observable.just(Collections.<LiveTickerEntry>emptyList()));
 
         TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
-        repository.refreshLiveTicker(1).subscribe(testSubscriber);
+        repository.refreshLiveTickerEntries(1).subscribe(testSubscriber);
         testSubscriber.assertError(IOException.class);
         testSubscriber.assertNoValues();
         testSubscriber.assertUnsubscribed();
@@ -86,14 +105,14 @@ public class MatchRepositoryManagerTest {
                 new LiveTickerEntry(1, 23, "test 1"),
                 new LiveTickerEntry(1, 45, "test 2")
         );
-        ;
+
         when(networkRepositoryMock.getLiveTickerEntries(1, 0))
                 .thenReturn(Observable.just(resultList));
         when(diskRepositoryMock.getLiveTickerEntries(1))
                 .thenReturn(Observable.just(Collections.<LiveTickerEntry>emptyList()));
 
         TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
-        repository.refreshLiveTicker(1).subscribe(testSubscriber);
+        repository.refreshLiveTickerEntries(1).subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
         testSubscriber.assertNoValues();
@@ -112,7 +131,7 @@ public class MatchRepositoryManagerTest {
                 .thenReturn(Observable.just(Collections.singletonList(new LiveTickerEntry(1, 23, "test 0"))));
 
         TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
-        repository.refreshLiveTicker(1).subscribe(testSubscriber);
+        repository.refreshLiveTickerEntries(1).subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
         testSubscriber.assertNoValues();

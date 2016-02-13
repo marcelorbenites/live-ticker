@@ -1,6 +1,7 @@
 package com.globo.brasileirao.data;
 
 import com.globo.brasileirao.entities.LiveTickerEntry;
+import com.globo.brasileirao.entities.MatchLiveTicker;
 
 import java.util.List;
 
@@ -12,16 +13,16 @@ import rx.Observable;
 public interface MatchLiveTickerRepository {
 
     /**
-     * Refresh repository with latest live ticker entries for a specific match.
+     * Refresh repository with latest live ticker for a specific match.
      * @return observable that emits no items, only completes successfully if refresh succeeds.
      */
-    Observable<Void> refreshLiveTicker();
+    Observable<Void> refreshMatchLiveTicker();
 
     /**
-     * @return observable for live ticker entries stored in repository.
+     * @return observable for a match live ticker stored in repository.
      * Note that this observable will not complete, any changes to underlying data will
      * cause the observable to emmit updated items.
      */
-    Observable<List<LiveTickerEntry>> getLiveTickerEntries();
+    Observable<MatchLiveTicker> getMatchLiveTicker();
 
 }

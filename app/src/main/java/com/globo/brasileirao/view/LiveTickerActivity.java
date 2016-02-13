@@ -14,8 +14,8 @@ import android.widget.TextView;
 import com.globo.brasileirao.R;
 import com.globo.brasileirao.data.DataModule;
 import com.globo.brasileirao.data.MatchLiveTickerRepository;
-import com.globo.brasileirao.entities.LiveTickerEntry;
 import com.globo.brasileirao.entities.Match;
+import com.globo.brasileirao.entities.MatchLiveTicker;
 import com.globo.brasileirao.exceptions.ThrowableToStringResourceConverter;
 import com.globo.brasileirao.view.adapter.LiveTickerEntriesAdapter;
 import com.globo.brasileirao.view.image.ImageLoader;
@@ -28,7 +28,6 @@ import com.jakewharton.rxbinding.support.v7.widget.RxToolbar;
 import com.trello.rxlifecycle.ActivityEvent;
 
 import java.text.DateFormat;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -87,13 +86,14 @@ public class LiveTickerActivity extends BaseActivity {
 
     @Override protected void onResume() {
         super.onResume();
-        repository.getLiveTickerEntries()
-                .compose(this.<List<LiveTickerEntry>>bindUntilEvent(ActivityEvent.PAUSE))
+        repository.getMatchLiveTicker()
+                .compose(this.<MatchLiveTicker>bindUntilEvent(ActivityEvent.PAUSE))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<LiveTickerEntry>>() {
-                    @Override public void call(List<LiveTickerEntry> entries) {
-                        adapter.refresh(entries);
+                .subscribe(new Action1<MatchLiveTicker>() {
+                    @Override public void call(MatchLiveTicker matchLiveTicker) {
+                        setMatch(matchLiveTicker.getMatch());
+                        adapter.refresh(matchLiveTicker.getEntries());
                         updateListVisibility();
                     }
                 });
@@ -144,7 +144,7 @@ public class LiveTickerActivity extends BaseActivity {
     }
 
     private void refresh() {
-        repository.refreshLiveTicker()
+        repository.refreshMatchLiveTicker()
                 .compose(this.<Void>bindUntilEvent(ActivityEvent.PAUSE))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

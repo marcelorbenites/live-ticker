@@ -33,6 +33,22 @@ public class MatchRepositoryManager implements MatchRepository {
         return diskRepository.getMatches();
     }
 
+    @Override public Observable<Match> getMatch(int matchId) {
+        return diskRepository.getMatch(matchId);
+    }
+
+    @Override public Observable<Void> refreshMatch(final int matchId) {
+        return diskRepository.getMatch(matchId)
+                .first()
+                .flatMap(new Func1<Match, Observable<Match>>() {
+                    @Override public Observable<Match> call(Match match) {
+                        return getMatchFromNetworkAndSaveToDisk(match.getMatchId());
+                    }
+                })
+                .ignoreElements()
+                .cast(Void.class);
+    }
+
     @Override public Observable<Void> refreshMatches() {
         return diskRepository.getMatches()
                 .first()
@@ -46,7 +62,7 @@ public class MatchRepositoryManager implements MatchRepository {
                 .cast(Void.class);
     }
 
-    @Override public Observable<Void> refreshLiveTicker(final int matchId) {
+    @Override public Observable<Void> refreshLiveTickerEntries(final int matchId) {
         return diskRepository.getLiveTickerEntries(matchId)
                 .first()
                 .flatMap(new Func1<List<LiveTickerEntry>, Observable<List<LiveTickerEntry>>>() {
@@ -77,6 +93,14 @@ public class MatchRepositoryManager implements MatchRepository {
         return networkRepository.getLiveTickerEntries(matchId, skip).doOnNext(new Action1<List<LiveTickerEntry>>() {
             @Override public void call(List<LiveTickerEntry> liveTickerEntries) {
                 diskRepository.saveOrOverwriteLiveTickerEntries(matchId, liveTickerEntries);
+            }
+        });
+    }
+
+    public Observable<Match> getMatchFromNetworkAndSaveToDisk(int matchId) {
+        return networkRepository.getMatch(matchId).doOnNext(new Action1<Match>() {
+            @Override public void call(Match match) {
+                diskRepository.saveOrOverwriteMatch(match);
             }
         });
     }
