@@ -19,6 +19,12 @@ public class MatchRestRepositoryTest {
         restRepository = new MatchRestRepository(restServiceMock, "MyApiKey");
     }
 
+    @Test public void getMatch() throws Exception {
+        restRepository.getMatch(1);
+        verify(restServiceMock).getMatch("{\"matchId\":1}", "MyApiKey");
+
+    }
+
     @Test public void getMatches() throws Exception {
         restRepository.getMatches();
         verify(restServiceMock).getMatches("MyApiKey");

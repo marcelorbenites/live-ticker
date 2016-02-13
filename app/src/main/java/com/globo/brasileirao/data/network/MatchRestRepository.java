@@ -29,6 +29,10 @@ public class MatchRestRepository implements MatchNetworkRepository {
         return restService.getMatches(apiKey);
     }
 
+    @Override public Observable<Match> getMatch(int match) {
+        return restService.getMatch("{\"matchId\":"+match+"}", apiKey);
+    }
+
     @Override public Observable<List<LiveTickerEntry>> getLiveTickerEntries(int matchId, int skip) {
         return restService.getLiveTickerEntries("{\"matchId\":"+matchId+"}", skip, apiKey);
     }

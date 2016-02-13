@@ -285,4 +285,52 @@ public class MatchRestServiceIntegrationTest {
 
         server.shutdown();
     }
+
+    @Test public void getMatch() throws Exception {
+        final MockWebServer server = new MockWebServer();
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("{  \n" +
+                        "   \"_id\":{  \n" +
+                        "      \"$oid\":\"56b53b44e4b0762325b1b64b\"\n" +
+                        "   },\n" +
+                        "   \"matchId\":1,\n" +
+                        "   \"awayTeam\":{  \n" +
+                        "      \"name\":\"Grêmio\",\n" +
+                        "      \"icon\":\"http://s.glbimg.com/es/sde/f/equipes/2014/04/14/gremio_60x60.png\"\n" +
+                        "   },\n" +
+                        "   \"homeTeam\":{  \n" +
+                        "      \"name\":\"Fluminense\",\n" +
+                        "      \"icon\":\"http://s.glbimg.com/es/sde/f/equipes/2015/05/05/fluminense-escudo-65x65.png\"\n" +
+                        "   },\n" +
+                        "   \"homeScore\":5,\n" +
+                        "   \"awayScore\":1,\n" +
+                        "   \"date\":\"2015-01-22T23:00:00.000Z\",\n" +
+                        "   \"location\":\"Maracanã\"\n" +
+                        "}"));
+        server.start();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(server.url("/"))
+                .addConverterFactory(JacksonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(new OkHttpClient())
+                .build();
+
+        TestSubscriber<Match> testSubscriber = new TestSubscriber<>();
+        retrofit.create(MatchRestService.class).getMatch("{\"matchId\":1}", "MyApiKey").subscribe(testSubscriber);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(1);
+        assertEquals(1, testSubscriber.getOnNextEvents().get(0).getMatchId());
+        assertEquals(5, testSubscriber.getOnNextEvents().get(0).getHomeScore());
+        assertEquals(1, testSubscriber.getOnNextEvents().get(0).getAwayScore());
+        assertEquals("Maracanã", testSubscriber.getOnNextEvents().get(0).getLocation());
+        testSubscriber.assertCompleted();
+
+        RecordedRequest request = server.takeRequest();
+        assertEquals("/api/1/databases/heroku_wm3w0h9v/collections/matches?fo=true&q={%22matchId%22:1}&apiKey=MyApiKey", request.getPath());
+        assertEquals("GET", request.getMethod());
+
+        server.shutdown();
+    }
 }

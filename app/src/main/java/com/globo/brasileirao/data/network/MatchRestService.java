@@ -22,6 +22,14 @@ public interface MatchRestService {
     @GET("/api/1/databases/heroku_wm3w0h9v/collections/matches") Observable<List<Match>> getMatches(@Query("apiKey") String apiKey);
 
     /**
+     * Get specific match from mongolab using apiKey.
+     * @param query used to filter the matches. Refer to <a href="http://docs.mongolab.com/data-api/">http://docs.mongolab.com/data-api/</a>
+     * @param apiKey mongolab api key.
+     * @return observable for a match stored in mongolab.
+     */
+    @GET("/api/1/databases/heroku_wm3w0h9v/collections/matches?fo=true") Observable<Match> getMatch(@Query("q") String query, @Query("apiKey") String apiKey);
+
+    /**
      * Get live ticker entries for specific match from mongolab using apiKey.
      * @param query used to filter the ticker entries. Refer to <a href="http://docs.mongolab.com/data-api/">http://docs.mongolab.com/data-api/</a>
      * @param skip number of entries to be skiped. Useful for pagination.
