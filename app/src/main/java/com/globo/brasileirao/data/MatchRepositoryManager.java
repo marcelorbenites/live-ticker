@@ -38,39 +38,19 @@ public class MatchRepositoryManager implements MatchRepository {
     }
 
     @Override public Observable<Void> refreshMatch(final int matchId) {
-        return diskRepository.getMatch(matchId)
-                .first()
-                .flatMap(new Func1<Match, Observable<Match>>() {
-                    @Override public Observable<Match> call(Match match) {
-                        return getMatchFromNetworkAndSaveToDisk(match.getMatchId());
-                    }
-                })
+        return getMatchFromNetworkAndSaveToDisk(matchId)
                 .ignoreElements()
                 .cast(Void.class);
     }
 
     @Override public Observable<Void> refreshMatches() {
-        return diskRepository.getMatches()
-                .first()
-                .flatMap(new Func1<List<Match>, Observable<List<Match>>>() {
-                    @Override public Observable<List<Match>> call(List<Match> matches) {
-                        return getMatchesFromNetworkAndSaveToDisk();
-
-                    }
-                })
+        return getMatchesFromNetworkAndSaveToDisk()
                 .ignoreElements()
                 .cast(Void.class);
     }
 
     @Override public Observable<Void> refreshLiveTickerEntries(final int matchId) {
-        return diskRepository.getLiveTickerEntries(matchId)
-                .first()
-                .flatMap(new Func1<List<LiveTickerEntry>, Observable<List<LiveTickerEntry>>>() {
-                    @Override public Observable<List<LiveTickerEntry>> call(List<LiveTickerEntry> liveTickerEntries) {
-                        return getLiveTickerEntriesFromNetworkAndSaveToDisk(matchId);
-
-                    }
-                })
+        return getLiveTickerEntriesFromNetworkAndSaveToDisk(matchId)
                 .ignoreElements()
                 .cast(Void.class);
 
