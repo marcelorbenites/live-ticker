@@ -3,6 +3,7 @@ package com.globo.brasileirao.data.disk;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 
 import com.globo.brasileirao.entities.LiveTickerEntry;
@@ -10,7 +11,6 @@ import com.globo.brasileirao.entities.Match;
 import com.globo.brasileirao.entities.Team;
 import com.squareup.sqlbrite.BriteDatabase;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,11 +30,28 @@ public class MatchSQLiteRepository implements MatchDiskRepository {
                 .mapToList(getCursorToMatch());
     }
 
+    @Override public Observable<Match> getMatch(int matchId) {
+        return database.createQuery("matches", "SELECT * FROM matches WHERE matchId = ? ORDER BY date ASC", String.valueOf(matchId))
+                .mapToList(getCursorToMatch())
+                .flatMap(new Func1<List<Match>, Observable<Match>>() {
+                    @Override public Observable<Match> call(List<Match> matches) {
+                        if (matches.isEmpty()) {
+                            return Observable.error(new SQLiteException("Match not found."));
+                        }
+                        return Observable.just(matches.get(0));
+                    }
+                });
+    }
+
+    @Override public void saveOrOverwriteMatch(Match match) {
+        database.insert("matches", getMatchContentValues(match), SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
     @Override public void saveOrOverwriteMatches(List<Match> matches) {
         final BriteDatabase.Transaction transaction = database.newTransaction();
         try {
             for (Match match : matches) {
-                database.insert("matches", getMatchContentValues(match), SQLiteDatabase.CONFLICT_REPLACE);
+                saveOrOverwriteMatch(match);
             }
             transaction.markSuccessful();
         } finally {
@@ -54,7 +71,7 @@ public class MatchSQLiteRepository implements MatchDiskRepository {
     @Override public void saveOrOverwriteLiveTickerEntries(int matchId, List<LiveTickerEntry> liveTickerEntries) {
         final BriteDatabase.Transaction transaction = database.newTransaction();
         try {
-            for (LiveTickerEntry liveTickerEntry: liveTickerEntries) {
+            for (LiveTickerEntry liveTickerEntry : liveTickerEntries) {
                 database.insert("live_ticker_entries", getLiveTickerEntryContentValues(matchId, liveTickerEntry), SQLiteDatabase.CONFLICT_REPLACE);
             }
             transaction.markSuccessful();

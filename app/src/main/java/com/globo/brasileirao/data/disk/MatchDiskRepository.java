@@ -13,11 +13,25 @@ import rx.Observable;
 public interface MatchDiskRepository {
 
     /**
+     * @return observable that return a match stored in repository.
+     * @param matchId match identification
+     * Note that this observable will not complete, any changes to underlying data will
+     * cause the observable to emmit updated items.
+     */
+    Observable<Match> getMatch(int matchId);
+
+    /**
      * @return observable that return all matches stored in repository.
      * Note that this observable will not complete, any changes to underlying data will
      * cause the observable to emmit updated items.
      */
     Observable<List<Match>> getMatches();
+
+    /**
+     * Save match to repository overwriting it if it already exist.
+     * @param match the match to save.
+     */
+    void saveOrOverwriteMatch(Match match);
 
     /**
      * Save matches to repository overwriting them if they already exist.

@@ -1,5 +1,6 @@
 package com.globo.brasileirao.data.disk;
 
+import android.database.sqlite.SQLiteException;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -33,6 +34,50 @@ public class MatchSQLiteRepositoryIntegrationTest {
         repository = new MatchSQLiteRepository(SqlBrite.create().wrapDatabaseHelper(new BrasileiraoDatabaseHelper(InstrumentationRegistry.getInstrumentation().getTargetContext())));
     }
 
+    @Test public void getInvalidMatch() throws Exception {
+        TestSubscriber<Match> testSubscriber = new TestSubscriber<>();
+        repository.getMatch(5).subscribe(testSubscriber);
+        testSubscriber.assertError(SQLiteException.class);
+        testSubscriber.assertNoValues();
+        testSubscriber.assertUnsubscribed();
+    }
+
+    @Test public void saveMatchAndQuery() throws Exception {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(1909, 6, 21);
+        final Match match = new Match(1, new Team("Grêmio", "www.host.com/gremioIcon"),
+                        new Team("Internacional", "www.host.com/interIcon"),
+                        2,
+                        0,
+                        calendar.getTime(),
+                        "Sociedade Leopoldina Porto Alegrense");
+        repository.saveOrOverwriteMatch(match);
+
+        TestSubscriber<Match> testSubscriber = new TestSubscriber<>();
+        repository.getMatch(1).subscribe(testSubscriber);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(1);
+        assertEquals(match, testSubscriber.getOnNextEvents().get(0));
+        testSubscriber.assertNotCompleted();
+
+        final Match modifiedMatch = new Match(1, new Team("Grêmio", "www.host.com/gremioIcon"),
+                new Team("Flamengo", "www.host.com/flamengoIcon"),
+                2,
+                0,
+                calendar.getTime(),
+                "Sociedade Leopoldina Porto Alegrense");
+        repository.saveOrOverwriteMatch(modifiedMatch);
+
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(2);
+        assertEquals(match, testSubscriber.getOnNextEvents().get(1));
+        testSubscriber.assertNotCompleted();
+        testSubscriber.unsubscribe();
+        testSubscriber.assertUnsubscribed();
+
+        repository.clearMatches();
+    }
+
     @Test public void saveMatchesAndQuery() throws Exception {
 
         final Calendar calendar = Calendar.getInstance();
@@ -63,14 +108,14 @@ public class MatchSQLiteRepositoryIntegrationTest {
 
         repository.clearMatches();
 
-        TestSubscriber<List<Match>> testSubscriber2 = new TestSubscriber<>();
-        repository.getMatches().subscribe(testSubscriber2);
-        testSubscriber2.assertNoErrors();
-        testSubscriber2.assertValueCount(1);
-        assertTrue(testSubscriber2.getOnNextEvents().get(0).isEmpty());
-        testSubscriber2.assertNotCompleted();
-        testSubscriber2.unsubscribe();
-        testSubscriber2.assertUnsubscribed();
+        TestSubscriber<List<Match>> testSubscriber4 = new TestSubscriber<>();
+        repository.getMatches().subscribe(testSubscriber4);
+        testSubscriber4.assertNoErrors();
+        testSubscriber4.assertValueCount(1);
+        assertTrue(testSubscriber4.getOnNextEvents().get(0).isEmpty());
+        testSubscriber4.assertNotCompleted();
+        testSubscriber4.unsubscribe();
+        testSubscriber4.assertUnsubscribed();
     }
 
     @Test public void saveLiveTickerEntriesAndQuery() throws Exception {
