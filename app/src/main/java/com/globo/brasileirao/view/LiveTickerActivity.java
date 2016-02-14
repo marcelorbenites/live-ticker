@@ -65,18 +65,19 @@ public class LiveTickerActivity extends BaseActivity {
     @Inject LinearLayoutManager layoutManager;
     @Inject ThrowableToStringResourceConverter throwableToStringResourceConverter;
 
+    private int matchId;
+
     @SuppressWarnings("ConstantConditions") @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_ticker);
         ButterKnife.bind(this);
+        inject();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
 
         if (getIntent().hasExtra(EXTRA_MATCH)) {
-            final Match match = getIntent().getParcelableExtra(EXTRA_MATCH);
-            inject(match);
-            setMatch(match);
+            setMatch((Match) getIntent().getParcelableExtra(EXTRA_MATCH));
         } else {
             throw new IllegalStateException("No match provided.");
         }
@@ -86,7 +87,7 @@ public class LiveTickerActivity extends BaseActivity {
 
     @Override protected void onResume() {
         super.onResume();
-        repository.getMatchLiveTicker()
+        repository.getMatchLiveTicker(matchId)
                 .compose(this.<MatchLiveTicker>bindUntilEvent(ActivityEvent.PAUSE))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -144,7 +145,7 @@ public class LiveTickerActivity extends BaseActivity {
     }
 
     private void refresh() {
-        repository.refreshMatchLiveTicker()
+        repository.refreshMatchLiveTicker(matchId)
                 .compose(this.<Void>bindUntilEvent(ActivityEvent.PAUSE))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -168,18 +169,19 @@ public class LiveTickerActivity extends BaseActivity {
                 });
     }
 
-    private void inject(Match match) {
+    private void inject() {
         DaggerLiveTickerComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .activityModule(getActivityModule())
                 .imageModule(new ImageModule())
-                .liveTickerModule(new LiveTickerModule(match))
+                .liveTickerModule(new LiveTickerModule())
                 .dataModule(new DataModule())
                 .build()
                 .injectLiveTickerActivity(this);
     }
 
     public void setMatch(Match match) {
+        matchId = match.getMatchId();
         final int teamIconWidth = unitConverter.dpToPixels(40);
         final int teamIconHeight = unitConverter.dpToPixels(40);
         homeTeamName.setText(match.getHomeTeam().getName());

@@ -13,13 +13,7 @@ import dagger.Provides;
 @Module(includes = {ActivityModule.class, ImageModule.class, DataModule.class})
 public class LiveTickerModule {
 
-    private final Match match;
-
-    public LiveTickerModule(Match match) {
-        this.match = match;
-    }
-
     @Provides MatchLiveTickerRepository provideMatchLiveTickerRepository(MatchRepository matchRepository) {
-        return new MatchLiveTickerRepositoryManager(match, matchRepository);
+        return new MatchLiveTickerRepositoryManager(matchRepository);
     }
 }

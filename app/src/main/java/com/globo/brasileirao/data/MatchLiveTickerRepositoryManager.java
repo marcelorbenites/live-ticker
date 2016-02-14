@@ -14,22 +14,20 @@ import rx.functions.Func2;
 
 public class MatchLiveTickerRepositoryManager implements MatchLiveTickerRepository {
 
-    private final Match match;
     private final MatchRepository matchRepository;
 
-    public MatchLiveTickerRepositoryManager(Match match, MatchRepository matchRepository) {
-        this.match = match;
+    public MatchLiveTickerRepositoryManager(MatchRepository matchRepository) {
         this.matchRepository = matchRepository;
     }
 
-    @Override public Observable<Void> refreshMatchLiveTicker() {
-        return Observable.concat(matchRepository.refreshMatch(match.getMatchId()),
-                matchRepository.refreshLiveTickerEntries(match.getMatchId()));
+    @Override public Observable<Void> refreshMatchLiveTicker(int matchId) {
+        return Observable.concat(matchRepository.refreshMatch(matchId),
+                matchRepository.refreshLiveTickerEntries(matchId));
     }
 
-    @Override public Observable<MatchLiveTicker> getMatchLiveTicker() {
-        return Observable.combineLatest(matchRepository.getMatch(match.getMatchId()),
-                matchRepository.getLiveTickerEntries(match.getMatchId()), createMatchLiveTicker());
+    @Override public Observable<MatchLiveTicker> getMatchLiveTicker(int matchId) {
+        return Observable.combineLatest(matchRepository.getMatch(matchId),
+                matchRepository.getLiveTickerEntries(matchId), createMatchLiveTicker());
     }
 
     @NonNull private Func2<Match, List<LiveTickerEntry>, MatchLiveTicker> createMatchLiveTicker() {

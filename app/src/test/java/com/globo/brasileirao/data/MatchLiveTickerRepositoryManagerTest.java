@@ -21,23 +21,20 @@ import static org.mockito.Mockito.when;
 
 public class MatchLiveTickerRepositoryManagerTest {
 
-    private Match matchMock;
     private MatchRepository matchRepositoryMock;
     private MatchLiveTickerRepositoryManager repository;
 
     @Before public void setUp() throws Exception {
-        matchMock = mock(Match.class);
         matchRepositoryMock = mock(MatchRepository.class);
-        repository = new MatchLiveTickerRepositoryManager(matchMock, matchRepositoryMock);
+        repository = new MatchLiveTickerRepositoryManager(matchRepositoryMock);
     }
 
     @Test public void refreshLiveTicker() throws Exception {
-        when(matchMock.getMatchId()).thenReturn(34);
         when(matchRepositoryMock.refreshMatch(34)).thenReturn(Observable.<Void>empty());
         when(matchRepositoryMock.refreshLiveTickerEntries(34)).thenReturn(Observable.<Void>empty());
 
         TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
-        repository.refreshMatchLiveTicker().subscribe(testSubscriber);
+        repository.refreshMatchLiveTicker(34).subscribe(testSubscriber);
         verify(matchRepositoryMock).refreshMatch(34);
         verify(matchRepositoryMock).refreshLiveTickerEntries(34);
         testSubscriber.assertNoErrors();
@@ -46,7 +43,6 @@ public class MatchLiveTickerRepositoryManagerTest {
     }
 
     @Test public void getMatchLiveTicker() throws Exception {
-        when(matchMock.getMatchId()).thenReturn(5);
 
         Match match = new Match(5, null, null, 5, 0, new Date(), "");
         when(matchRepositoryMock.getMatch(5)).thenReturn(Observable.just(match));
@@ -58,7 +54,7 @@ public class MatchLiveTickerRepositoryManagerTest {
         when(matchRepositoryMock.getLiveTickerEntries(5)).thenReturn(Observable.just(liveTickerEntries));
 
         TestSubscriber<MatchLiveTicker> testSubscriber = new TestSubscriber<>();
-        repository.getMatchLiveTicker().subscribe(testSubscriber);
+        repository.getMatchLiveTicker(5).subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);
         testSubscriber.assertValue(new MatchLiveTicker(match, liveTickerEntries));
