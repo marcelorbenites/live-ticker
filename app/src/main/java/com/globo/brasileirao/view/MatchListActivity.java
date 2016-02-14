@@ -16,6 +16,7 @@ import com.globo.brasileirao.data.DataModule;
 import com.globo.brasileirao.data.MatchRepository;
 import com.globo.brasileirao.entities.Match;
 import com.globo.brasileirao.exceptions.ThrowableToStringResourceConverter;
+import com.globo.brasileirao.scheduler.MatchSyncScheduler;
 import com.globo.brasileirao.view.adapter.MatchListAdapter;
 import com.globo.brasileirao.view.adapter.OnMatchClickListener;
 import com.globo.brasileirao.view.image.ImageModule;
@@ -39,6 +40,7 @@ public class MatchListActivity extends BaseActivity {
 
     public static final int TEAM_ICON_WIDTH_DP = 24;
     public static final int TEAM_ICON_HEIGHT_DP = 24;
+    public static final int SYNC_INTERVAL_SECONDS = 60;
     @Bind(R.id.activity_match_list_coordinator_layout) CoordinatorLayout coordinatorLayout;
     @Bind(R.id.activity_match_list_swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.activity_match_list_recycler_view) RecyclerView list;
@@ -48,6 +50,7 @@ public class MatchListActivity extends BaseActivity {
     @Inject MatchRepository repository;
     @Inject MatchListAdapter adapter;
     @Inject LinearLayoutManager layoutManager;
+    @Inject MatchSyncScheduler syncScheduler;
     @Inject ThrowableToStringResourceConverter throwableToStringResourceConverter;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class MatchListActivity extends BaseActivity {
         list.setLayoutManager(layoutManager);
         list.setAdapter(adapter);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        syncScheduler.syncMatches(SYNC_INTERVAL_SECONDS);
     }
 
     private void inject() {
@@ -112,6 +116,11 @@ public class MatchListActivity extends BaseActivity {
     @Override protected void onPause() {
         super.onPause();
         adapter.setOnMatchClickListener(null);
+    }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        syncScheduler.cancelMatchesSync();
     }
 
     private void refresh() {

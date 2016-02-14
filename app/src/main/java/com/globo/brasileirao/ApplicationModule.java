@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.globo.brasileirao.data.disk.BrasileiraoDatabaseHelper;
+import com.google.android.gms.gcm.GcmNetworkManager;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
@@ -41,5 +42,9 @@ public class ApplicationModule {
 
     @Provides @Singleton BriteDatabase provideDatabase() {
         return SqlBrite.create().wrapDatabaseHelper(new BrasileiraoDatabaseHelper(application));
+    }
+
+    @Provides @Singleton GcmNetworkManager provideGcmNetworkManager() {
+        return GcmNetworkManager.getInstance(application);
     }
 }

@@ -72,4 +72,8 @@ dependencies {
 
     // Image
     compile 'com.squareup.picasso:picasso:2.5.2'
+
+    // Logging
+    compile 'com.jakewharton.timber:timber:4.0.1'
+
 }

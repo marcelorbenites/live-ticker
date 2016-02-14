@@ -2,6 +2,8 @@ package com.globo.brasileirao;
 
 import android.content.Context;
 
+import com.globo.brasileirao.scheduler.GcmTaskFactory;
+import com.google.android.gms.gcm.GcmNetworkManager;
 import com.squareup.sqlbrite.BriteDatabase;
 
 import javax.inject.Named;
@@ -19,4 +21,8 @@ public interface ApplicationComponent {
     Retrofit retrofit();
 
     BriteDatabase briteDatabase();
+
+    GcmNetworkManager gcmNetworkManager();
+
+    GcmTaskFactory gcmTaskFactory();
 }

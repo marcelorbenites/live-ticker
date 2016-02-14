@@ -7,6 +7,8 @@ import com.google.android.gms.gcm.TaskParams;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class SyncService extends GcmTaskService {
 
     @Inject GcmTaskTagExecutor executor;
@@ -25,7 +27,9 @@ public class SyncService extends GcmTaskService {
     }
 
     @Override public int onRunTask(TaskParams taskParams) {
-       return executor.execute(taskParams.getTag());
+        final int result = executor.execute(taskParams.getTag());
+        Timber.d("Synchronization finished for tag %s with result %d.", taskParams.getTag(), result);
+        return result;
     }
 
     protected ApplicationComponent getApplicationComponent() {

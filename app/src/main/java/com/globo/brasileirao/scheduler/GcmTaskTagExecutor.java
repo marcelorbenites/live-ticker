@@ -3,13 +3,15 @@ package com.globo.brasileirao.scheduler;
 import com.globo.brasileirao.data.MatchRepository;
 import com.google.android.gms.gcm.GcmNetworkManager;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class GcmTaskTagExecutor {
 
     private final MatchRepository matchRepository;
 
-    public GcmTaskTagExecutor(MatchRepository matchRepository) {
+    @Inject public GcmTaskTagExecutor(MatchRepository matchRepository) {
         this.matchRepository = matchRepository;
     }
 
