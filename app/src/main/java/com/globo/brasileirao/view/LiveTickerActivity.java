@@ -17,6 +17,7 @@ import com.globo.brasileirao.data.MatchLiveTickerRepository;
 import com.globo.brasileirao.entities.Match;
 import com.globo.brasileirao.entities.MatchLiveTicker;
 import com.globo.brasileirao.exceptions.ThrowableToStringResourceConverter;
+import com.globo.brasileirao.scheduler.MatchLiveTickerScheduler;
 import com.globo.brasileirao.view.adapter.LiveTickerEntriesAdapter;
 import com.globo.brasileirao.view.image.ImageLoader;
 import com.globo.brasileirao.view.image.ImageModule;
@@ -41,6 +42,7 @@ import rx.schedulers.Schedulers;
 public class LiveTickerActivity extends BaseActivity {
 
     public static final String EXTRA_MATCH = "com.globo.brasileirao.intent.extra.MATCH";
+    public static final int SYNC_INTERVAL_SECONDS = 60;
 
     @Bind(R.id.activity_live_ticker_coordinator_layout) CoordinatorLayout coordinatorLayout;
     @Bind(R.id.activity_live_ticker_swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
@@ -64,6 +66,7 @@ public class LiveTickerActivity extends BaseActivity {
     @Inject LiveTickerEntriesAdapter adapter;
     @Inject LinearLayoutManager layoutManager;
     @Inject ThrowableToStringResourceConverter throwableToStringResourceConverter;
+    @Inject MatchLiveTickerScheduler scheduler;
 
     private int matchId;
 
@@ -83,6 +86,7 @@ public class LiveTickerActivity extends BaseActivity {
         }
         list.setLayoutManager(layoutManager);
         list.setAdapter(adapter);
+        scheduler.syncMatchLiveTicker(matchId, SYNC_INTERVAL_SECONDS);
     }
 
     @Override protected void onResume() {
@@ -123,6 +127,11 @@ public class LiveTickerActivity extends BaseActivity {
                     }
                 });
         showSwipeRefreshLayoutAndRefresh();
+    }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        scheduler.cancelMatchesLiveTickerSync();
     }
 
     private void updateListVisibility() {
