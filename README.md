@@ -30,6 +30,8 @@ It is not a best practice to add the application keystore to source control, ins
 
 To speed-up backend development a tool called Heroku (https://dashboard.heroku.com/) was used together with a service called MongoLab (mongolab.com). MongoLab exposes a REST API to access data stored in a MongoDB NoSQL database.
 
+**Note**: the only match the actually has live ticker entries for now is **Fluminense x Grêmio**.
+
 
 ## Application Architecture
 
