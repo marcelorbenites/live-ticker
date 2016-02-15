@@ -1,90 +1,53 @@
 # Marcelo Benites
 **Globo.com: coding challenge**
 
-## O Desafio
+## Build
 
-O desafio que você deverá desenvolver é o aplicativo "Brasileirão", para acompanhamento de jogos de futebol.
+### Android Studio Version
 
-O aplicativo deverá funcionar em dispositivos iOS ou Android.
+I use the bleeding edge versions of Android Studio, Android Gradle Plugin and Gradle. It is only possible to access those version with Canary Channel enabled. Feel free to downgrade them if needed in order to build.
 
-Você também deverá fazer o backend que provê os dados para o aplicativo com a tecnologia de sua escolha.
+| Dependency | Version |
+|---------|------------|
+| 2.0 beta4   | Android Studio | 
+| 2.0.0-beta4   | Android Gradle Plugin | 
+| 2.11   | Gradle | 
 
-## Considerações Gerais
+### Keys
 
-Você deverá usar este repositório como o principal do projeto. Todos os seus commits devem estar registrados aqui.
+Application depends on brasileirao-keystore.jks keystore for release builds and on an API key to access the backend server. I use some environment variables to provide this information. For the project to build the following entries must be added to the gradle.properties Global file (usually under /Users/YourUser/.gradle/gradle.properties):
 
-**Registre tudo**: Ideias que gostaria de implementar se tivesse mais tempo (explique como você as resolveria), decisões tomadas e seus porquês, arquiteturas testadas e os motivos de terem sido modificadas ou abandonadas.
+    BRASILEIRAO_KEYSTORE_PATH=../keystore/brasileirao-keystore.jks
+    BRASILEIRAO_KEYSTORE_PASSWORD=XyBgK3c;u3qr^s4];q6P
+    BRASILEIRAO_KEY_ALIAS=brasileiraokey
+    BRASILEIRAO_KEY_PASSWORD=VMr+$j42t23DK&rTdvR=
+    API_KEY="dHaBQmPaTAgClSUnjVrs3aEMkqfxFASI"
 
-Sinta-se livre para incluir ferramentas e bibliotecas open source.
+It is not a best practice to add the application keystore to source control, instead a separate file management mechanism should take care of allowing only the responsible for publishing the application to access the keystore. For the sake of simplicity you can find application's keystore under **keystore/brasileirao-keystore.jks**.
 
-Para ajudar, disponibilizamos uma máquina na Amazon caso você precise de uma infraestrutura para o seu código backend (veja o README dentro do diretório amazon_keypair).
 
-Disponibilize no repositório a aplicação compilada para podermos fazer deploy facilmente em um dispositivo para testes.
+## Backend
 
-Avaliaremos sua submissão como se fosse um produto mínimo viável (MVP), pronto para ser publicado, mas que continuará sendo expandido e mantido no futuro.
+To speed-up backend development a tool called Heroku (https://dashboard.heroku.com/) was used together with a service called MongoLab (mongolab.com). MongoLab exposes a REST API to access data stored in a MongoDB NoSQL database.
 
-Em caso de dúvidas, pergunte!
 
-## O Aplicativo
+## Application Architecture
 
-O aplicativo possui duas telas: uma listagem de jogos e o detalhe de cada jogo.
+The main architecture decision was to use a persistent layer to store the data that is updated in every network call. Views are updated in a reactive fashion whenever the persistent layer changes. This approach has the advantage of allowing background events to update the UI without tha hassle of Activity to Service communication. 
 
-### Tela Inicial
+The application has two different Activities. One for current matches and the other one with a live ticker for a selected match. Both Activities fire a background service to keep their data up-to-date while they are alive. The service is implemented using [GCMNetworkManager] (https://developers.google.com/android/reference/com/google/android/gms/gcm/GcmNetworkManager) which improves battery life since it gives the system the chance to define the best moment to execute the requests.
+Images are cached using [Picasso] (http://square.github.io/picasso/) a library to manage image downloading.
 
-- Lista de jogos
-  - Nome dos times
-  - Escudos
-  - Placar
-  - Data e horário
 
-Considere as seguintes condições:
+## Improvements
 
-- A lista de jogos deve estar disponível offline
+* Instead of calling MongoLab REST API directly use NodeJS and ExpressJS to create a custom REST API in Heroku. It would allow us to define a caching mechanism for requests using Cache-Control HTTP header. It will also allow us to query multiple collections in a single request. Currently in order to update LiveTickerActivity data we perform two requests. One for the match score and the other one for the live ticker entries list.
+* Migrate match list and live ticker list to Fragments. It would allow us to support bigger screen sizes by displaying both Fragments in a single Activity when necessary.
+* Taking advantage of application's architecture it is simple to implement a push-to-sync mechanism using [Google Cloud Messaging] (https://developers.google.com/cloud-messaging/) instead of pooling the informaton from server like we do right now.
+* A custom server would allow us to reduce bandwidth usage by returning only the updated/new live ticker entries for a match (if-modified-since would help on that). I've started by using a skip mechanism provided by MongoLab REST API but end up abandoning this approach. Since I would skip entries already persisted in the local database I would never get an update if an entry changes remotely.
 
-- O usuário pode querer atualizar a lista de jogos
 
-- Clicar sobre um jogo leva o usuário para a tela de detalhe daquele jogo
 
-Exemplo de uma lista de jogos na web (lado direito): [brasileirão série a](http://globoesporte.globo.com/futebol/brasileirao-serie-a/).
 
-### Detalhe do Jogo
 
-- Detalhe do jogo
-  - Nome dos times
-  - Escudos
-  - Placar
-  - Data e horário
-  - Local
 
-- Lance a Lance
-  - Lista de momentos importantes do jogo
-    - Tempo no jogo
-    - Descrição
-
-- Atalho para voltar para a tela inicial
-
-## Imagens
-
-Escudos dos times
-
-```
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/vasco_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/avai_60x60_.png
-http://s.glbimg.com/es/sde/f/equipes/2014/09/15/sport_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/internacional_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/palmeiras_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2015/05/06/chapecoense_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/atletico_mg_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/coritiba_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/gremio_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2015/04/29/cruzeiro_65.png
-http://s.glbimg.com/es/sde/f/equipes/2015/06/24/atletico-pr_2015_65.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/sao_paulo_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/flamengo_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/corinthians_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/ponte_preta_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/figueirense_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/goias_60x60.png
-http://s.glbimg.com/es/sde/f/equipes/2015/05/05/fluminense-escudo-65x65.png
-http://s.glbimg.com/es/sde/f/equipes/2014/04/14/santos_60x60.png
-```
