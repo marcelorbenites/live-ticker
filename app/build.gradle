@@ -6,6 +6,15 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+    signingConfigs {
+        brasileirao {
+            storeFile file(project.BRASILEIRAO_KEYSTORE_PATH)
+            storePassword project.BRASILEIRAO_KEYSTORE_PASSWORD
+            keyAlias project.BRASILEIRAO_KEY_ALIAS
+            keyPassword project.BRASILEIRAO_KEY_PASSWORD
+        }
+    }
+
     defaultConfig {
         applicationId "com.globo.brasileirao"
         minSdkVersion 18
@@ -17,8 +26,9 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.brasileirao
         }
     }
 }
