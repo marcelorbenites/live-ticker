@@ -29,5 +29,8 @@
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="b78e19309fcd9225b83cd3f892e19fafec2af9f5" />
     </application>
 </manifest>

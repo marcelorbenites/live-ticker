@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.globo.brasileirao.R;
 import com.globo.brasileirao.data.DataModule;
 import com.globo.brasileirao.data.MatchLiveTickerRepository;
@@ -173,6 +174,7 @@ public class LiveTickerActivity extends BaseActivity {
                     }
                 }, new Action1<Throwable>() {
                     @Override public void call(Throwable throwable) {
+                        Crashlytics.logException(throwable);
                         Snackbar.make(coordinatorLayout, throwableToStringResourceConverter.convert(throwable), Snackbar.LENGTH_SHORT).show();
                     }
                 });
