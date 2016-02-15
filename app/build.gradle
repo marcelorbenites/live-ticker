@@ -19,13 +19,14 @@ android {
         applicationId "com.globo.brasileirao"
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0.0-rc3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "API_KEY", project.API_KEY
     }
     buildTypes {
         release {
+            ext.betaDistributionEmailsFilePath="beta_distribution_emails.txt"
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.brasileirao

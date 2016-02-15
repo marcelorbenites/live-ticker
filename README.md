@@ -48,6 +48,11 @@ Images are cached using [Picasso] (http://square.github.io/picasso/) a library t
 * Taking advantage of application's architecture it is simple to implement a push-to-sync mechanism using [Google Cloud Messaging] (https://developers.google.com/cloud-messaging/) instead of pooling the informaton from server like we do right now.
 * A custom server would allow us to reduce bandwidth usage by returning only the updated/new live ticker entries for a match (if-modified-since would help on that). I've started by using a skip mechanism provided by MongoLab REST API but end up abandoning this approach. Since I would skip entries already persisted in the local database I would never get an update if an entry changes remotely.
 
+## Beta Distribution
+
+In order to easily share a beta distribution of the application a comma separated email file (**beta\_distribution\_emails.txt**) may be edited and the following command issued from terminal:
+
+    ./gradlew assembleRelease crashlyticsUploadDistributionRelease
 
 
 
