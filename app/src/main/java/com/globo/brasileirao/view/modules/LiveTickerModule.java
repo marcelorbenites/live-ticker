@@ -13,7 +13,5 @@ import dagger.Provides;
 @Module(includes = {ActivityModule.class, ImageModule.class, DataModule.class})
 public class LiveTickerModule {
 
-    @Provides MatchLiveTickerRepository provideMatchLiveTickerRepository(MatchRepository matchRepository) {
-        return new MatchLiveTickerRepositoryManager(matchRepository);
-    }
+
 }

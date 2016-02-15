@@ -26,4 +26,8 @@ public class DataModule {
     @Provides MatchDiskRepository provideMatchDiskRepository(BriteDatabase database) {
         return new MatchSQLiteRepository(database);
     }
+
+    @Provides MatchLiveTickerRepository provideMatchLiveTickerRepository(MatchRepository matchRepository) {
+        return new MatchLiveTickerRepositoryManager(matchRepository);
+    }
 }

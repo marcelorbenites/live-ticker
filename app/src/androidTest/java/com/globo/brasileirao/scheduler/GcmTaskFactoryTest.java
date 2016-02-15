@@ -1,5 +1,6 @@
 package com.globo.brasileirao.scheduler;
 
+import android.os.Bundle;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.google.android.gms.gcm.PeriodicTask;
@@ -22,7 +23,8 @@ public class GcmTaskFactoryTest {
     }
 
     @Test public void createPeriodicTask() throws Exception {
-        final PeriodicTask periodicTask = taskFactory.createPeriodicTask("MyTag", 34, SyncService.class);
+        final Bundle bundle = new Bundle();
+        final PeriodicTask periodicTask = taskFactory.createPeriodicTask("MyTag", 34, SyncService.class, bundle);
         assertEquals(Task.NETWORK_STATE_CONNECTED, periodicTask.getRequiredNetwork());
         assertEquals(false, periodicTask.isPersisted());
         assertEquals(true, periodicTask.isUpdateCurrent());
@@ -30,5 +32,6 @@ public class GcmTaskFactoryTest {
         assertEquals(34, periodicTask.getPeriod());
         assertEquals("MyTag", periodicTask.getTag());
         assertEquals(SyncService.class.getName(), periodicTask.getServiceName());
+        assertEquals(bundle, periodicTask.getExtras());
     }
 }

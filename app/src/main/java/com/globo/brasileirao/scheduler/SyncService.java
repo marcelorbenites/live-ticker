@@ -27,7 +27,7 @@ public class SyncService extends GcmTaskService {
     }
 
     @Override public int onRunTask(TaskParams taskParams) {
-        final int result = executor.execute(taskParams.getTag());
+        final int result = executor.execute(taskParams.getTag(), taskParams.getExtras());
         Timber.d("Synchronization finished for tag %s with result %d.", taskParams.getTag(), result);
         return result;
     }
