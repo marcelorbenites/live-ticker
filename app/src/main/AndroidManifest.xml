@@ -1,36 +1,37 @@
-<manifest package="com.globo.brasileirao"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.marcelorbenites.liveticker">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
 
-    <application
-        android:name=".BrasileiraoApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+  <application
+      android:name=".LiveTickerApplication"
+      android:allowBackup="true"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/app_name"
+      android:supportsRtl="true"
+      android:theme="@style/AppTheme">
 
-        <activity android:name=".view.MatchListActivity">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <action android:name="android.intent.action.MAIN"/>
-            </intent-filter>
-        </activity>
+    <activity android:name=".view.MatchListActivity">
+      <intent-filter>
+        <category android:name="android.intent.category.LAUNCHER"/>
+        <action android:name="android.intent.action.MAIN"/>
+      </intent-filter>
+    </activity>
 
-        <activity
-            android:name=".view.LiveTickerActivity"
-            android:label="@string/activity_live_ticker_label"/>
+    <activity
+        android:name=".view.LiveTickerActivity"
+        android:label="@string/activity_live_ticker_label"/>
 
-        <service android:name=".scheduler.SyncService"
-                 android:exported="true"
-                 android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE" >
-            <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
-            </intent-filter>
-        </service>
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="b78e19309fcd9225b83cd3f892e19fafec2af9f5" />
-    </application>
+    <service
+        android:name=".scheduler.SyncService"
+        android:exported="true"
+        android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+      <intent-filter>
+        <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
+      </intent-filter>
+    </service>
+    <meta-data
+        android:name="io.fabric.ApiKey"
+        android:value="b78e19309fcd9225b83cd3f892e19fafec2af9f5"/>
+  </application>
 </manifest>

@@ -55,11 +55,11 @@
 -keep class com.fasterxml.jackson.annotation.** { *; }
 -dontwarn com.fasterxml.jackson.databind.ext.DOMSerializer
 
--keep class com.globo.brasileirao.entities.LiveTickerEntry { *; }
+-keep class LiveTickerEntry { *; }
 
--keep class com.globo.brasileirao.entities.Match { *; }
+-keep class Match { *; }
 
--keep class com.globo.brasileirao.entities.Team { * ;}
+-keep class Team { * ;}
 
 # RxJava
 -keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {

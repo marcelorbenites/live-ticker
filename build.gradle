@@ -1,27 +1,29 @@
 buildscript {
-    repositories {
-        jcenter()
-        maven { url 'https://maven.fabric.io/public' }
-    }
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.21.4'
-        classpath 'com.android.tools.build:gradle:2.0.0-beta4'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-    }
+  repositories {
+    jcenter()
+    google()
+    maven { url 'https://maven.fabric.io/public' }
+  }
+  dependencies {
+    classpath 'io.fabric.tools:gradle:1.23.0'
+    classpath 'com.android.tools.build:gradle:2.3.3'
+    classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+  }
 }
 
 allprojects {
-    repositories {
-        jcenter()
-        maven { url 'https://maven.fabric.io/public' }
-    }
+  repositories {
+    jcenter()
+    google()
+    maven { url 'https://maven.fabric.io/public' }
+  }
 }
 
 task clean(type: Delete) {
-    delete rootProject.buildDir
+  delete rootProject.buildDir
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.11'
-    distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+  gradleVersion = '4.0.1'
+  distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }

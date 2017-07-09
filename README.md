@@ -1,29 +1,4 @@
-# Marcelo Benites
-**Globo.com: coding challenge**
-
-## Build
-
-### Android Studio Version
-
-I use the bleeding edge versions of Android Studio, Android Gradle Plugin and Gradle. It is only possible to access those version with Canary Channel enabled. Feel free to downgrade them if needed in order to build.
-
-| Dependency | Version |
-|---------|------------|
-| 2.0 beta4   | Android Studio | 
-| 2.0.0-beta4   | Android Gradle Plugin | 
-| 2.11   | Gradle | 
-
-### Keys
-
-Application depends on brasileirao-keystore.jks keystore for release builds and on an API key to access the backend server. I use some environment variables to provide this information. For the project to build the following entries must be added to the gradle.properties Global file (usually under /Users/YourUser/.gradle/gradle.properties):
-
-    BRASILEIRAO_KEYSTORE_PATH=../keystore/brasileirao-keystore.jks
-    BRASILEIRAO_KEYSTORE_PASSWORD=XyBgK3c;u3qr^s4];q6P
-    BRASILEIRAO_KEY_ALIAS=brasileiraokey
-    BRASILEIRAO_KEY_PASSWORD=VMr+$j42t23DK&rTdvR=
-    API_KEY="dHaBQmPaTAgClSUnjVrs3aEMkqfxFASI"
-
-It is not a best practice to add the application keystore to source control, instead a separate file management mechanism should take care of allowing only the responsible for publishing the application to access the keystore. For the sake of simplicity you can find application's keystore under **keystore/brasileirao-keystore.jks**.
+# Live Ticker
 
 
 ## Backend
@@ -48,11 +23,6 @@ Images are cached using [Picasso] (http://square.github.io/picasso/) a library t
 * Taking advantage of application's architecture it is simple to implement a push-to-sync mechanism using [Google Cloud Messaging] (https://developers.google.com/cloud-messaging/) instead of pooling the informaton from server like we do right now.
 * A custom server would allow us to reduce bandwidth usage by returning only the updated/new live ticker entries for a match (if-modified-since would help on that). I've started by using a skip mechanism provided by MongoLab REST API but end up abandoning this approach. Since I would skip entries already persisted in the local database I would never get an update if an entry changes remotely.
 
-## Beta Distribution
-
-In order to easily share a beta distribution of the application a comma separated email file (**beta\_distribution\_emails.txt**) may be edited and the following command issued from terminal:
-
-    ./gradlew assembleRelease crashlyticsUploadDistributionRelease
 
 
 
